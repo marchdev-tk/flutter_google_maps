@@ -1,111 +1,242 @@
-import 'package:flutter/material.dart';
+// Copyright (c) 2020, the MarchDev Toolkit project authors. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
 
-void main() => runApp(MyApp());
+import 'dart:math' show Point;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_google_maps/flutter_google_maps.dart';
+
+void main() {
+  GoogleMap.init('API_KEY');
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Google Map Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  GlobalKey<GoogleMapStateBase> _key = GlobalKey<GoogleMapStateBase>();
+  bool _polygonAdded = false;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  List<Widget> _buildClearButtons() => [
+        RaisedButton.icon(
+          color: Colors.red,
+          textColor: Colors.white,
+          icon: Icon(Icons.bubble_chart),
+          label: Text('CLEAR POLYGONS'),
+          onPressed: () {
+            GoogleMap.of(_key).clearPolygons();
+            setState(() => _polygonAdded = false);
+          },
+        ),
+        const SizedBox(width: 16),
+        RaisedButton.icon(
+          color: Colors.red,
+          textColor: Colors.white,
+          icon: Icon(Icons.pin_drop),
+          label: Text('CLEAR MARKERS'),
+          onPressed: () {
+            GoogleMap.of(_key).clearMarkers();
+          },
+        ),
+        const SizedBox(width: 16),
+        RaisedButton.icon(
+          color: Colors.red,
+          textColor: Colors.white,
+          icon: Icon(Icons.directions),
+          label: Text('CLEAR DIRECTIONS'),
+          onPressed: () {
+            GoogleMap.of(_key).clearDirections();
+          },
+        ),
+      ];
+
+  List<Widget> _buildAddButtons() => [
+        FloatingActionButton(
+          child: Icon(_polygonAdded ? Icons.edit : Icons.bubble_chart),
+          backgroundColor: _polygonAdded ? Colors.orange : null,
+          onPressed: () {
+            if (!_polygonAdded) {
+              GoogleMap.of(_key).addPolygon(
+                '1',
+                polygon,
+              );
+            } else {
+              GoogleMap.of(_key).editPolygon(
+                '1',
+                polygon,
+                fillColor: Colors.purple,
+                strokeColor: Colors.purple,
+              );
+            }
+
+            setState(() => _polygonAdded = true);
+          },
+        ),
+        const SizedBox(width: 16),
+        FloatingActionButton(
+          child: Icon(Icons.pin_drop),
+          onPressed: () {
+            GoogleMap.of(_key).addMarker(
+              Point(33.875513, -117.550257),
+              info: 'test info',
+            );
+            GoogleMap.of(_key).addMarker(
+              Point(33.775513, -117.450257),
+              icon: 'assets/images/map-marker-warehouse.png',
+              info: contentString,
+            );
+          },
+        ),
+        const SizedBox(width: 16),
+        FloatingActionButton(
+          child: Icon(Icons.directions),
+          onPressed: () {
+            GoogleMap.of(_key).addDirection(
+              'salinas municipal airport sns',
+              '1353 Dayton Street, Unit B, salinas',
+              startLabel: '1',
+              startInfo: 'salinas municipal airport sns',
+              endIcon: 'assets/images/map-marker-warehouse.png',
+              endInfo: '1353 Dayton Street, Unit B, salinas',
+            );
+          },
+        ),
+      ];
 
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text('Google Map'),
+        ),
+        body: Stack(
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            Positioned.fill(
+              child: GoogleMap(
+                key: _key,
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            Positioned(
+              left: 16,
+              right: kIsWeb ? 60 : 16,
+              bottom: 16,
+              child: Row(
+                children: <Widget>[
+                  LayoutBuilder(
+                    builder: (context, constraints) =>
+                        constraints.maxWidth < 1000
+                            ? Row(children: _buildClearButtons())
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: _buildClearButtons(),
+                              ),
+                  ),
+                  Spacer(),
+                  ..._buildAddButtons(),
+                ],
+              ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
+      );
 }
+
+const contentString = r'''
+<div id="content">
+  <div id="siteNotice"></div>
+  <h1 id="firstHeading" class="firstHeading">Uluru</h1>
+  <div id="bodyContent">
+    <p>
+      <b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large 
+      sandstone rock formation in the southern part of the 
+      Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) 
+      south west of the nearest large town, Alice Springs; 450&#160;km 
+      (280&#160;mi) by road. Kata Tjuta and Uluru are the two major 
+      features of the Uluru - Kata Tjuta National Park. Uluru is 
+      sacred to the Pitjantjatjara and Yankunytjatjara, the 
+      Aboriginal people of the area. It has many springs, waterholes, 
+      rock caves and ancient paintings. Uluru is listed as a World 
+      Heritage Site.
+    </p>
+    <p>
+      Attribution: Uluru, 
+      <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">
+        http://en.wikipedia.org/w/index.php?title=Uluru
+      </a>
+      (last visited June 22, 2009).
+    </p>
+  </div>
+</div>
+''';
+
+const polygon = <Point<double>>[
+  Point<double>(32.707868, -117.191018),
+  Point<double>(32.705645, -117.191096),
+  Point<double>(32.697756, -117.166664),
+  Point<double>(32.686486, -117.163206),
+  Point<double>(32.675876, -117.169452),
+  Point<double>(32.674726, -117.165233),
+  Point<double>(32.679833, -117.158487),
+  Point<double>(32.677571, -117.153893),
+  Point<double>(32.671987, -117.160079),
+  Point<double>(32.667547, -117.160477),
+  Point<double>(32.654748, -117.147579),
+  Point<double>(32.651933, -117.150312),
+  Point<double>(32.649676, -117.144334),
+  Point<double>(32.631665, -117.138201),
+  Point<double>(32.632033, -117.132249),
+  Point<double>(32.630156, -117.137234),
+  Point<double>(32.628072, -117.136479),
+  Point<double>(32.630315, -117.131443),
+  Point<double>(32.625930, -117.135312),
+  Point<double>(32.623754, -117.131664),
+  Point<double>(32.627465, -117.130883),
+  Point<double>(32.622598, -117.128791),
+  Point<double>(32.622622, -117.133183),
+  Point<double>(32.618690, -117.133634),
+  Point<double>(32.618980, -117.128403),
+  Point<double>(32.609847, -117.132502),
+  Point<double>(32.604198, -117.125333),
+  Point<double>(32.588260, -117.122032),
+  Point<double>(32.591164, -117.116851),
+  Point<double>(32.587601, -117.105968),
+  Point<double>(32.583792, -117.104434),
+  Point<double>(32.570566, -117.101382),
+  Point<double>(32.569256, -117.122378),
+  Point<double>(32.560825, -117.122903),
+  Point<double>(32.557753, -117.131040),
+  Point<double>(32.542737, -117.124883),
+  Point<double>(32.534156, -117.126062),
+  Point<double>(32.563255, -117.134963),
+  Point<double>(32.584055, -117.134263),
+  Point<double>(32.619405, -117.140001),
+  Point<double>(32.655293, -117.157349),
+  Point<double>(32.669944, -117.169624),
+  Point<double>(32.682710, -117.189445),
+  Point<double>(32.685297, -117.208773),
+  Point<double>(32.679814, -117.224882),
+  Point<double>(32.697212, -117.227058),
+  Point<double>(32.707701, -117.219816),
+  Point<double>(32.711931, -117.214107),
+  Point<double>(32.715026, -117.196521),
+  Point<double>(32.713053, -117.189703),
+  Point<double>(32.707868, -117.191018),
+];
