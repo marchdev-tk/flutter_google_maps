@@ -1,0 +1,391 @@
+// Copyright (c) 2020, the MarchDev Toolkit project authors. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html';
+import 'dart:ui' as ui;
+import 'dart:math' as math show Point;
+
+import 'package:flutter/widgets.dart';
+
+import 'package:uuid/uuid.dart';
+import 'package:flinq/flinq.dart';
+import 'package:google_maps/google_maps.dart';
+
+import 'utils.dart';
+import '../core/google_map.dart';
+
+class GoogleMapState extends GoogleMapStateBase {
+  final htmlId = Uuid().v1();
+  final directionsService = DirectionsService();
+
+  final _markers = <String, Marker>{};
+  final _infoState = <String, bool>{};
+  final _infos = <String, InfoWindow>{};
+  final _polygons = <String, Polygon>{};
+  final _directions = <String, DirectionsRenderer>{};
+
+  GMap _map;
+
+  @override
+  void addMarker(
+    math.Point<double> position, {
+    String label,
+    String icon,
+    String info,
+  }) {
+    assert(() {
+      if (position == null) {
+        throw ArgumentError.notNull('position');
+      }
+
+      if (position.x == null || position.y == null) {
+        throw ArgumentError.notNull('position.x && position.y');
+      }
+
+      return true;
+    }());
+
+    _markers.putIfAbsent(
+      position.toString(),
+      () {
+        final marker = Marker()
+          ..map = _map
+          ..label = label
+          ..icon = icon != null ? 'assets/$icon' : null
+          ..position = position.toLatLng();
+
+        if (info != null) {
+          marker.onClick.listen((_) {
+            final key = position.toString();
+
+            if (_infos[key] == null) {
+              _infos[key] = InfoWindow(InfoWindowOptions()..content = info);
+              _infos[key].onCloseclick.listen((_) => _infoState[key] = false);
+            }
+
+            if (!(_infoState[key] ?? false)) {
+              _infos[key].open(_map, marker);
+              _infoState[key] = true;
+            } else {
+              _infos[key].close();
+
+              _infoState[key] = false;
+            }
+          });
+        }
+
+        return marker;
+      },
+    );
+  }
+
+  @override
+  void removeMarker(math.Point<double> position) {
+    assert(() {
+      if (position == null) {
+        throw ArgumentError.notNull('position');
+      }
+
+      if (position.x == null || position.y == null) {
+        throw ArgumentError.notNull('position.x && position.y');
+      }
+
+      return true;
+    }());
+
+    final key = position.toString();
+
+    var marker = _markers.remove(key);
+    marker?.map = null;
+    marker = null;
+
+    var info = _infos.remove(key);
+    info?.close();
+    info = null;
+
+    _infoState.remove(key);
+  }
+
+  @override
+  void clearMarkers() {
+    for (var marker in _markers.values) {
+      marker?.map = null;
+      marker = null;
+    }
+    _markers.clear();
+
+    for (var info in _infos.values) {
+      info?.close();
+      info = null;
+    }
+    _infos.clear();
+
+    _infoState.clear();
+  }
+
+  @override
+  void addDirection(
+    dynamic origin,
+    dynamic destination, {
+    String startLabel,
+    String startIcon,
+    String startInfo,
+    String endLabel,
+    String endIcon,
+    String endInfo,
+  }) {
+    assert(() {
+      if (origin == null) {
+        throw ArgumentError.notNull('origin');
+      }
+
+      if (destination == null) {
+        throw ArgumentError.notNull('destination');
+      }
+
+      return true;
+    }());
+
+    _directions.putIfAbsent(
+      '${origin}_$destination',
+      () {
+        DirectionsRenderer direction = DirectionsRenderer(
+            DirectionsRendererOptions()..suppressMarkers = true);
+        direction.map = _map;
+
+        final request = DirectionsRequest()
+          ..origin = origin is math.Point ? LatLng(origin.x, origin.y) : origin
+          ..destination = destination is math.Point<double>
+              ? destination.toLatLng()
+              : destination
+          ..travelMode = TravelMode.DRIVING;
+        directionsService.route(
+          request,
+          (response, status) {
+            if (status == DirectionsStatus.OK) {
+              direction.directions = response;
+
+              final leg = response?.routes?.firstOrNull?.legs?.firstOrNull;
+
+              final startLatLng = leg?.startLocation;
+              if (startLatLng != null) {
+                if (startIcon != null ||
+                    startInfo != null ||
+                    startLabel != null) {
+                  addMarker(
+                    startLatLng.toPoint(),
+                    icon: startIcon,
+                    info: startInfo ?? leg.startAddress,
+                    label: startLabel,
+                  );
+                } else {
+                  addMarker(
+                    startLatLng.toPoint(),
+                    icon: 'assets/images/marker_a.png',
+                    info: leg.startAddress,
+                  );
+                }
+              }
+
+              final endLatLng = leg?.endLocation;
+              if (endLatLng != null) {
+                if (endIcon != null || endInfo != null || endLabel != null) {
+                  addMarker(
+                    endLatLng.toPoint(),
+                    icon: endIcon,
+                    info: endInfo ?? leg.endAddress,
+                    label: endLabel,
+                  );
+                } else {
+                  addMarker(
+                    endLatLng.toPoint(),
+                    icon: 'assets/images/marker_b.png',
+                    info: leg.endAddress,
+                  );
+                }
+              }
+            }
+          },
+        );
+
+        return direction;
+      },
+    );
+  }
+
+  @override
+  void removeDirection(dynamic origin, dynamic destination) {
+    assert(() {
+      if (origin == null) {
+        throw ArgumentError.notNull('origin');
+      }
+
+      if (destination == null) {
+        throw ArgumentError.notNull('destination');
+      }
+
+      return true;
+    }());
+
+    var value = _directions.remove('${origin}_$destination');
+    value?.map = null;
+    final start = value
+        ?.directions?.routes?.firstOrNull?.legs?.firstOrNull?.startLocation
+        ?.toPoint();
+    if (start != null) {
+      removeMarker(start);
+    }
+    final end = value
+        ?.directions?.routes?.firstOrNull?.legs?.lastOrNull?.endLocation
+        ?.toPoint();
+    if (end != null) {
+      removeMarker(end);
+    }
+    value = null;
+  }
+
+  @override
+  void clearDirections() {
+    for (var direction in _directions.values) {
+      direction?.map = null;
+      final start = direction
+          ?.directions?.routes?.firstOrNull?.legs?.firstOrNull?.startLocation
+          ?.toPoint();
+      if (start != null) {
+        removeMarker(start);
+      }
+      final end = direction
+          ?.directions?.routes?.firstOrNull?.legs?.lastOrNull?.endLocation
+          ?.toPoint();
+      if (end != null) {
+        removeMarker(end);
+      }
+      direction = null;
+    }
+    _directions.clear();
+  }
+
+  @override
+  void addPolygon(
+    String id,
+    Iterable<math.Point<double>> points, {
+    Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWidth = 1,
+    Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  }) {
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      if (points == null) {
+        throw ArgumentError.notNull('position');
+      }
+
+      if (points.isEmpty) {
+        throw ArgumentError.value(<math.Point<double>>[], 'points');
+      }
+
+      if (points.length < 3) {
+        throw ArgumentError('Polygon must have at least 3 coordinates');
+      }
+
+      return true;
+    }());
+
+    _polygons.putIfAbsent(
+      id,
+      () {
+        final options = PolygonOptions()
+          ..paths = points.mapList((_) => _.toLatLng())
+          ..strokeColor = strokeColor?.toHashString() ?? '#000000'
+          ..strokeOpacity = strokeOpacity ?? 0.8
+          ..strokeWeight = strokeWidth ?? 1
+          ..fillColor = strokeColor?.toHashString() ?? '#000000'
+          ..fillOpacity = fillOpacity ?? 0.35;
+
+        return Polygon(options)..map = _map;
+      },
+    );
+  }
+
+  @override
+  void editPolygon(
+    String id,
+    Iterable<math.Point<double>> points, {
+    Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWeight = 1,
+    Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  }) {
+    removePolygon(id);
+    addPolygon(
+      id,
+      points,
+      strokeColor: strokeColor,
+      strokeOpacity: strokeOpacity,
+      strokeWidth: strokeWeight,
+      fillColor: fillColor,
+      fillOpacity: fillOpacity,
+    );
+  }
+
+  @override
+  void removePolygon(String id) {
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      return true;
+    }());
+
+    var value = _polygons.remove(id);
+    value?.map = null;
+    value = null;
+  }
+
+  @override
+  void clearPolygons() {
+    for (var polygon in _polygons.values) {
+      polygon?.map = null;
+      polygon = null;
+    }
+    _polygons.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mapOptions = MapOptions()
+      ..zoom = GoogleMap.zoom
+      ..center = LatLng(widget.lat, widget.lng)
+      ..streetViewControl = false
+      ..fullscreenControl = false
+      ..mapTypeControl = false;
+
+    // ignore: undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory(htmlId, (int viewId) {
+      final elem = DivElement()
+        ..id = htmlId
+        ..style.width = '100%'
+        ..style.height = '100%'
+        ..style.border = 'none';
+
+      _map = GMap(elem, mapOptions);
+
+      return elem;
+    });
+
+    return LayoutBuilder(
+      builder: (context, constraints) => Container(
+        constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+        child: HtmlElementView(viewType: htmlId),
+      ),
+    );
+  }
+}
