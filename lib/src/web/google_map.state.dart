@@ -5,7 +5,7 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:ui' as ui;
-import 'dart:math' as math show Point;
+import 'dart:math' as math show Point, Rectangle;
 
 import 'package:flutter/widgets.dart';
 
@@ -27,6 +27,23 @@ class GoogleMapState extends GoogleMapStateBase {
   final _directions = <String, DirectionsRenderer>{};
 
   GMap _map;
+
+  @override
+  void moveCamera(
+    math.Rectangle<double> newBounds, {
+    double padding = 0,
+    bool animated = true,
+  }) {
+    assert(() {
+      if (newBounds == null) {
+        throw ArgumentError.notNull('newBounds');
+      }
+
+      return true;
+    }());
+
+    _map.center = newBounds.center.toLatLng();
+  }
 
   @override
   void addMarker(

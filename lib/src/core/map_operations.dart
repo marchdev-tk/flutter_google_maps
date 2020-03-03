@@ -3,10 +3,16 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ui' show Color;
-import 'dart:math' show Point;
+import 'dart:math' show Point, Rectangle;
 
 abstract class MapOperations
-    implements MapMarkers, MapDirections, MapPolygones {}
+    implements MapMarkers, MapDirections, MapPolygones {
+  void moveCamera(
+    Rectangle<double> newBounds, {
+    double padding = 0,
+    bool animated = true,
+  });
+}
 
 abstract class MapMarkers {
   /// Adds a marker to map by given [position].

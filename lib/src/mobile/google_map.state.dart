@@ -2,20 +2,19 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:math' as math show Point;
+import 'dart:math' as math show Point, Rectangle;
 
 import 'package:flutter/widgets.dart';
 
 import 'package:flinq/flinq.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_directions_api/google_directions_api.dart';
+import 'package:google_directions_api/google_directions_api.dart' as gda;
 
 import 'utils.dart';
 import '../core/google_map.dart' as gmap;
-import 'package:google_polyline_algorithm/google_polyline_algorithm.dart' as gpa;
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
-  final directionsService = DirectionsService();
+  final directionsService = gda.DirectionsService();
 
   final _markers = <String, Marker>{};
   final _polygons = <String, Polygon>{};
@@ -39,6 +38,33 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       createLocalImageConfiguration(context),
       asset,
     );
+  }
+
+  @override
+  void moveCamera(
+    math.Rectangle<double> newBounds, {
+    double padding = 0,
+    bool animated = true,
+  }) {
+    assert(() {
+      if (newBounds == null) {
+        throw ArgumentError.notNull('newBounds');
+      }
+
+      return true;
+    }());
+
+    if (animated == true) {
+      _controller.animateCamera(CameraUpdate.newLatLngBounds(
+        newBounds.toLatLngBounds(),
+        padding ?? 0,
+      ));
+    } else {
+      _controller.moveCamera(CameraUpdate.newLatLngBounds(
+        newBounds.toLatLngBounds(),
+        padding ?? 0,
+      ));
+    }
   }
 
   @override
@@ -124,29 +150,29 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       return true;
     }());
 
-    final request = DirectionsRequest(
+    final request = gda.DirectionsRequest(
       origin: origin is math.Point ? LatLng(origin.x, origin.y) : origin,
       destination: destination is math.Point<double>
           ? destination.toLatLng()
           : destination,
-      travelMode: TravelMode.driving,
+      travelMode: gda.TravelMode.driving,
     );
     directionsService.route(
       request,
       (response, status) {
-        if (status == DirectionsStatus.ok) {
+        if (status == gda.DirectionsStatus.ok) {
           final key = '${origin}_$destination';
 
           if (_polylines.containsKey(key)) return;
 
           _controller.animateCamera(CameraUpdate.newLatLngBounds(
-            response?.routes?.firstOrNull?.bounds,
+            response?.routes?.firstOrNull?.bounds?.toLatLng(),
             80,
           ));
 
           final leg = response?.routes?.firstOrNull?.legs?.firstOrNull;
 
-          final startLatLng = leg?.startLocation;
+          final startLatLng = leg?.startLocation?.toLatLng();
           if (startLatLng != null) {
             _directionMarkerCoords[startLatLng.toPoint()] = origin;
             if (startIcon != null || startInfo != null || startLabel != null) {
@@ -165,7 +191,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
             }
           }
 
-          final endLatLng = leg?.endLocation;
+          final endLatLng = leg?.endLocation?.toLatLng();
           if (endLatLng != null) {
             _directionMarkerCoords[endLatLng.toPoint()] = destination;
             if (endIcon != null || endInfo != null || endLabel != null) {
@@ -184,15 +210,11 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
             }
           }
 
-          final points = gpa
-              .decodePolyline(
-                  response?.routes?.firstOrNull?.overviewPolyline?.points)
-              ?.mapList((_) => LatLng(_[0], _[1]));
-
           final polylineId = PolylineId(key);
           final polyline = Polyline(
             polylineId: polylineId,
-            points: points ?? [startLatLng, endLatLng],
+            points: response?.routes?.firstOrNull?.overviewPath ??
+                [startLatLng, endLatLng],
             color: const Color(0xcc2196F3),
             startCap: Cap.roundCap,
             endCap: Cap.roundCap,

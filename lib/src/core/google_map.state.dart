@@ -10,6 +10,14 @@ import 'google_map.dart';
 
 class GoogleMapState extends GoogleMapStateBase {
   @override
+  void moveCamera(
+    Rectangle<double> newBounds, {
+    double padding = 0,
+    bool animated = true,
+  }) =>
+      throw UnimplementedError();
+
+  @override
   void addDirection(
     origin,
     destination, {
