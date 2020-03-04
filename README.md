@@ -68,7 +68,7 @@ And now you're ready to go.
 | mobilePreferences | MobileMapPreferences | Set of mobile map preferences                                     |
 | webPreferences    | WebMapPreferences    | Set of web map preferences                                        |
 
-`MapType` is one of following variants:
+**`MapType` is one of following variants:**
 
   * `none` -> do not display map tiles
   * `normal` -> normal tiles (traffic and labels, subtle terrain information)
@@ -76,34 +76,36 @@ And now you're ready to go.
   * `terrain` -> terrain tiles (indicates type and height of terrain)
   * `hybrid` -> hybrid tiles (satellite images with some labels/overlays)
 
-`MobileMapPreferences` can be configured with:
+**`MobileMapPreferences` can be configured with:**
 
-  | Property                 | Type       | Description                                                                        |
-  | :----------------------: | :--------: | :--------------------------------------------------------------------------------: |
-  | compassEnabled           | bool       | True if the map should show a compass when rotated                                 |
-  | mapToolbarEnabled        | bool       | True if the map should show a toolbar when you interact with the map. Android only |
-  | myLocationEnabled        | bool       | True if a "My Location" layer should be shown on the map                           |
-  | myLocationButtonEnabled  | bool       | Enables or disables the my-location button                                         |
-  | indoorViewEnabled        | bool       | Enables or disables the indoor view from the map                                   |
-  | trafficEnabled           | bool       | Enables or disables the traffic layer of the map                                   |
-  | buildingsEnabled         | bool       | Enables or disables showing 3D buildings where available                           |
-  | padding                  | EdgeInsets | Padding to be set on mapdetails                                                    |
+| Property                 | Type       | Description                                                                        |
+| :----------------------: | :--------: | :--------------------------------------------------------------------------------: |
+| compassEnabled           | bool       | True if the map should show a compass when rotated                                 |
+| mapToolbarEnabled        | bool       | True if the map should show a toolbar when you interact with the map. Android only |
+| myLocationEnabled        | bool       | True if a "My Location" layer should be shown on the map                           |
+| myLocationButtonEnabled  | bool       | Enables or disables the my-location button                                         |
+| indoorViewEnabled        | bool       | Enables or disables the indoor view from the map                                   |
+| trafficEnabled           | bool       | Enables or disables the traffic layer of the map                                   |
+| buildingsEnabled         | bool       | Enables or disables showing 3D buildings where available                           |
+| padding                  | EdgeInsets | Padding to be set on mapdetails                                                    |
 
-`WebMapPreferences` can be configured with:
+**`WebMapPreferences` can be configured with:**
 
-  | Property           | Type | Description                            |
-  | :----------------: | :--: | :------------------------------------: |
-  | streetViewControl  | bool | Enables or disables streetViewControl  |
-  | fullscreenControl  | bool | Enables or disables fullscreenControl  |
-  | mapTypeControl     | bool | Enables or disables mapTypeControl     |
-  | scrollwheel        | bool | Enables or disables scrollwheel        |
-  | panControl         | bool | Enables or disables panControl         |
-  | overviewMapControl | bool | Enables or disables overviewMapControl |
-  | rotateControl      | bool | Enables or disables rotateControl      |
-  | scaleControl       | bool | Enables or disables scaleControl       |
-  | zoomControl        | bool | Enables or disables zoomControl        |
+| Property           | Type | Description                            |
+| :----------------: | :--: | :------------------------------------: |
+| streetViewControl  | bool | Enables or disables streetViewControl  |
+| fullscreenControl  | bool | Enables or disables fullscreenControl  |
+| mapTypeControl     | bool | Enables or disables mapTypeControl     |
+| scrollwheel        | bool | Enables or disables scrollwheel        |
+| panControl         | bool | Enables or disables panControl         |
+| overviewMapControl | bool | Enables or disables overviewMapControl |
+| rotateControl      | bool | Enables or disables rotateControl      |
+| scaleControl       | bool | Enables or disables scaleControl       |
+| zoomControl        | bool | Enables or disables zoomControl        |
 
-### To prepare for interacting with GoogleMap you will need to create a `key` and assign it to the `GoogleMap` widget.
+### To prepare for interacting with GoogleMap you will need to:
+
+Create a `key` and assign it to the `GoogleMap` widget.
 
 ### GoogleMap widget has 2 static methods, they are:
   
@@ -117,7 +119,9 @@ And now you're ready to go.
   Initializer of [GoogleMap]. `Required` if `Directions API` will be needed. For other cases, could be ignored.
 
 
-### To interact with GoogleMap you'll need to use static `of` method
+### To interact with GoogleMap you'll need to:
+
+**Use static `of` method**
 
 Here's list of interactions:
 
@@ -197,12 +201,12 @@ Here's list of interactions:
   });
   ```
 
-  * Remove polygon from the map by given [id].
+* Remove polygon from the map by given [id].
   ```dart
   void removePolygon(String id);
   ```
 
-  * Remove all polygones from the map.
+* Remove all polygones from the map.
   ```dart
   void clearPolygons();
   ```
