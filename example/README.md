@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_google_maps/flutter_google_maps.dart';
 
 void main() {
-  GoogleMap.init('AIzaSyAaiBfE-fMdqesFZwktXk5hnkfaZQ-HWPg');
+  GoogleMap.init('API_KEY');
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
@@ -135,6 +135,29 @@ class _MyHomePageState extends State<MyHomePage> {
             Positioned.fill(
               child: GoogleMap(
                 key: _key,
+                initialZoom: 12,
+                initialPosition:
+                    GeoCoord(34.0469058, -118.3503948), // Los Angeles, CA
+                mapType: MapType.terrain,
+                mobilePreferences: const MobileMapPreferences(
+                  trafficEnabled: true,
+                ),
+                webPreferences: WebMapPreferences(
+                  fullscreenControl: true,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 16,
+              left: 16,
+              child: FloatingActionButton(
+                child: Icon(Icons.person_pin_circle),
+                onPressed: () {
+                  GoogleMap.of(_key).moveCamera(GeoCoordBounds(
+                    northeast: GeoCoord(34.021307, -117.432317),
+                    southwest: GeoCoord(33.835745, -117.712785),
+                  ));
+                },
               ),
             ),
             Positioned(

@@ -12,7 +12,7 @@ dependencies:
 
   google_polyline_algorithm: ^2.0.0
   google_maps_flutter: ^0.5.24+1
-  google_directions_api: ^0.4.0
+  google_directions_api: ^0.5.0
   google_maps: ^3.4.1
   http: ^0.12.0+4
   flinq: ^1.1.0
@@ -22,6 +22,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  pedantic: ^1.8.0
 
 flutter:
   uses-material-design: true

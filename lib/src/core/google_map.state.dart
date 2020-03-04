@@ -6,12 +6,15 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
+import 'package:google_directions_api/google_directions_api.dart'
+    show GeoCoordBounds;
+
 import 'google_map.dart';
 
 class GoogleMapState extends GoogleMapStateBase {
   @override
   void moveCamera(
-    Rectangle<double> newBounds, {
+    GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
   }) =>

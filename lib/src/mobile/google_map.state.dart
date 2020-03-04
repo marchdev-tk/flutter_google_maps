@@ -2,19 +2,19 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:math' as math show Point, Rectangle;
+import 'dart:math' as math show Point;
 
 import 'package:flutter/widgets.dart';
 
 import 'package:flinq/flinq.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_directions_api/google_directions_api.dart' as gda;
+import 'package:google_directions_api/google_directions_api.dart';
 
 import 'utils.dart';
 import '../core/google_map.dart' as gmap;
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
-  final directionsService = gda.DirectionsService();
+  final directionsService = DirectionsService();
 
   final _markers = <String, Marker>{};
   final _polygons = <String, Polygon>{};
@@ -32,7 +32,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   }
 
   Future<BitmapDescriptor> _getBmpDescFromAsset(String asset) async {
-    if (asset == null) return null;
+    if (asset == null) return BitmapDescriptor.defaultMarker;
 
     return await BitmapDescriptor.fromAssetImage(
       createLocalImageConfiguration(context),
@@ -42,7 +42,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void moveCamera(
-    math.Rectangle<double> newBounds, {
+    GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
   }) {
@@ -95,7 +95,9 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     final marker = Marker(
       markerId: markerId,
       position: position.toLatLng(),
-      icon: await _getBmpDescFromAsset(icon),
+      icon: icon == null
+          ? BitmapDescriptor.defaultMarker
+          : await _getBmpDescFromAsset(icon),
       infoWindow: info != null ? InfoWindow(title: info) : null,
       zIndex: zIndex?.toDouble(),
     );
@@ -150,25 +152,25 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       return true;
     }());
 
-    final request = gda.DirectionsRequest(
+    final request = DirectionsRequest(
       origin: origin is math.Point ? LatLng(origin.x, origin.y) : origin,
       destination: destination is math.Point<double>
           ? destination.toLatLng()
           : destination,
-      travelMode: gda.TravelMode.driving,
+      travelMode: TravelMode.driving,
     );
     directionsService.route(
       request,
       (response, status) {
-        if (status == gda.DirectionsStatus.ok) {
+        if (status == DirectionsStatus.ok) {
           final key = '${origin}_$destination';
 
           if (_polylines.containsKey(key)) return;
 
-          _controller.animateCamera(CameraUpdate.newLatLngBounds(
-            response?.routes?.firstOrNull?.bounds?.toLatLng(),
-            80,
-          ));
+          moveCamera(
+            response?.routes?.firstOrNull?.bounds,
+            padding: 80,
+          );
 
           final leg = response?.routes?.firstOrNull?.legs?.firstOrNull;
 
@@ -178,14 +180,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
             if (startIcon != null || startInfo != null || startLabel != null) {
               addMarker(
                 startLatLng.toPoint(),
-                icon: startIcon ?? 'assets/images/marker_a.png',
+                icon: startIcon /* ?? 'assets/images/marker_a.png' */,
                 info: startInfo ?? leg.startAddress,
                 label: startLabel,
               );
             } else {
               addMarker(
                 startLatLng.toPoint(),
-                icon: 'assets/images/marker_a.png',
+                // icon: 'assets/images/marker_a.png', // TODO: figure out wtf is happening
                 info: leg.startAddress,
               );
             }
@@ -197,14 +199,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
             if (endIcon != null || endInfo != null || endLabel != null) {
               addMarker(
                 endLatLng.toPoint(),
-                icon: endIcon ?? 'assets/images/marker_b.png',
+                icon: endIcon /*  ?? 'assets/images/marker_b.png' */,
                 info: endInfo ?? leg.endAddress,
                 label: endLabel,
               );
             } else {
               addMarker(
                 endLatLng.toPoint(),
-                icon: 'assets/images/marker_b.png',
+                // icon: 'assets/images/marker_b.png',
                 info: leg.endAddress,
               );
             }
@@ -213,7 +215,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           final polylineId = PolylineId(key);
           final polyline = Polyline(
             polylineId: polylineId,
-            points: response?.routes?.firstOrNull?.overviewPath ??
+            points: response?.routes?.firstOrNull?.overviewPath
+                    ?.mapList((_) => _.toLatLng()) ??
                 [startLatLng, endLatLng],
             color: const Color(0xcc2196F3),
             startCap: Cap.roundCap,
@@ -362,15 +365,27 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
         builder: (context, constraints) => Container(
           constraints: BoxConstraints(maxHeight: constraints.maxHeight),
           child: GoogleMap(
+            mapType: MapType.values[widget.mapType.index],
+            minMaxZoomPreference:
+                MinMaxZoomPreference(widget.minZoom, widget.minZoom),
             markers: Set<Marker>.of(_markers.values),
             polygons: Set<Polygon>.of(_polygons.values),
             polylines: Set<Polyline>.of(_polylines.values),
             initialCameraPosition: CameraPosition(
-              target: LatLng(widget.lat, widget.lng),
-              zoom: gmap.GoogleMap.zoom.toDouble(),
+              target: widget.initialPosition.toLatLng(),
+              zoom: widget.initialZoom,
             ),
             onMapCreated: (GoogleMapController controller) =>
                 _controller = controller,
+            padding: widget.mobilePreferences.padding,
+            compassEnabled: widget.mobilePreferences.compassEnabled,
+            trafficEnabled: widget.mobilePreferences.trafficEnabled,
+            buildingsEnabled: widget.mobilePreferences.buildingsEnabled,
+            indoorViewEnabled: widget.mobilePreferences.indoorViewEnabled,
+            mapToolbarEnabled: widget.mobilePreferences.mapToolbarEnabled,
+            myLocationEnabled: widget.mobilePreferences.myLocationEnabled,
+            myLocationButtonEnabled:
+                widget.mobilePreferences.myLocationButtonEnabled,
           ),
         ),
       );

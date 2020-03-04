@@ -4,9 +4,12 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_directions_api/google_directions_api.dart';
+
+import 'package:google_directions_api/google_directions_api.dart'
+    show GeoCoord, DirectionsService;
 
 import 'map_operations.dart';
+import 'map_preferences.dart';
 
 import 'google_map.state.dart'
     if (dart.library.html) '../web/google_map.state.dart'
@@ -16,16 +19,45 @@ import 'google_map.state.dart'
 class GoogleMap extends StatefulWidget {
   const GoogleMap({
     Key key,
-    this.lat = defaultLat,
-    this.lng = defaultLng,
-  }) : super(key: key);
+    this.minZoom,
+    this.maxZoom,
+    this.initialZoom = _zoom,
+    this.mapType = MapType.normal,
+    this.initialPosition = const GeoCoord(_defaultLat, _defaultLng),
+    this.mobilePreferences = const MobileMapPreferences(),
+    this.webPreferences = const WebMapPreferences(),
+  })  : assert(mapType != null),
+        assert(mapType != null),
+        assert(initialPosition != null),
+        assert(initialZoom != null),
+        assert(mobilePreferences != null),
+        assert(webPreferences != null),
+        super(key: key);
 
-  final double lat;
-  final double lng;
+  /// The initial position of the map's camera.
+  final GeoCoord initialPosition;
 
-  static const defaultLat = 34.0469058;
-  static const defaultLng = -118.3503948;
-  static const zoom = 12;
+  /// The initial zoom of the map's camera.
+  final double initialZoom;
+
+  /// Type of map tiles to be rendered.
+  final MapType mapType;
+
+  /// The preferred minimum zoom level or null, if unbounded from below.
+  final double minZoom;
+
+  /// The preferred maximum zoom level or null, if unbounded from above.
+  final double maxZoom;
+
+  /// Set of mobile map preferences
+  final MobileMapPreferences mobilePreferences;
+
+  /// Set of web map preferences
+  final WebMapPreferences webPreferences;
+
+  static const _zoom = 12.0;
+  static const _defaultLat = 34.0469058;
+  static const _defaultLng = -118.3503948;
 
   static MapOperations of(GlobalKey<GoogleMapStateBase> key) =>
       key.currentState;

@@ -3,12 +3,16 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ui' show Color;
-import 'dart:math' show Point, Rectangle;
+import 'dart:math' show Point;
+
+import 'package:google_directions_api/google_directions_api.dart'
+    show GeoCoordBounds;
 
 abstract class MapOperations
     implements MapMarkers, MapDirections, MapPolygones {
+  /// Moves camera to the new bounds.
   void moveCamera(
-    Rectangle<double> newBounds, {
+    GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
   });

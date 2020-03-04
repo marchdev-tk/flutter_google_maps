@@ -2,16 +2,17 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:ui' as ui;
-import 'dart:math' as math show Point, Rectangle;
+import 'dart:math' as math show Point;
 
 import 'package:flutter/widgets.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:flinq/flinq.dart';
 import 'package:google_maps/google_maps.dart';
+import 'package:google_directions_api/google_directions_api.dart'
+    show GeoCoordBounds;
 
 import 'utils.dart';
 import '../core/google_map.dart';
@@ -30,7 +31,7 @@ class GoogleMapState extends GoogleMapStateBase {
 
   @override
   void moveCamera(
-    math.Rectangle<double> newBounds, {
+    GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
   }) {
@@ -43,6 +44,14 @@ class GoogleMapState extends GoogleMapStateBase {
     }());
 
     _map.center = newBounds.center.toLatLng();
+
+    final zoom = _map.zoom;
+    if (animated == true) {
+      _map.panToBounds(newBounds.toLatLngBounds());
+    } else {
+      _map.fitBounds(newBounds.toLatLngBounds());
+    }
+    _map.zoom = zoom;
   }
 
   @override
@@ -379,11 +388,20 @@ class GoogleMapState extends GoogleMapStateBase {
   @override
   Widget build(BuildContext context) {
     final mapOptions = MapOptions()
-      ..zoom = GoogleMap.zoom
-      ..center = LatLng(widget.lat, widget.lng)
-      ..streetViewControl = false
-      ..fullscreenControl = false
-      ..mapTypeControl = false;
+      ..zoom = widget.initialZoom
+      ..center = widget.initialPosition.toLatLng()
+      ..streetViewControl = widget.webPreferences.streetViewControl
+      ..fullscreenControl = widget.webPreferences.fullscreenControl
+      ..mapTypeControl = widget.webPreferences.mapTypeControl
+      ..scrollwheel = widget.webPreferences.scrollwheel
+      ..panControl = widget.webPreferences.panControl
+      ..overviewMapControl = widget.webPreferences.overviewMapControl
+      ..rotateControl = widget.webPreferences.rotateControl
+      ..scaleControl = widget.webPreferences.scaleControl
+      ..zoomControl = widget.webPreferences.zoomControl
+      ..minZoom = widget.minZoom
+      ..maxZoom = widget.maxZoom
+      ..mapTypeId = widget.mapType.toString().split('.')[1];
 
     // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(htmlId, (int viewId) {

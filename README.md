@@ -40,6 +40,11 @@ void main() {
 
 
 
-## Feature requests
+## Feature requests and Bug reports
 
-Feel free to post feature requests [here](https://github.com/marchdev-tk/flinq/issues).
+Feel free to post a feature requests or report a bug [here](https://github.com/marchdev-tk/flutter_google_maps/issues).
+
+## TODO
+
+* Add circles support
+* Add polyline support

@@ -3,39 +3,45 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ui' as ui show Color;
-import 'dart:math' as math show Point, Rectangle;
+import 'dart:math' as math show Point;
 
 import 'package:google_maps/google_maps.dart';
+import 'package:google_directions_api/google_directions_api.dart'
+    show GeoCoord, GeoCoordBounds;
 
 extension WebLatLngExtensions on LatLng {
   math.Point<double> toPoint() => math.Point(this.lat, this.lng);
+  GeoCoord toGeoCoord() => GeoCoord(this.lat, this.lng);
 }
 
 extension WebPointExtensions on math.Point<double> {
   LatLng toLatLng() => LatLng(this.x, this.y);
 }
 
-extension WebColorExtensions on ui.Color {
-  String toHashString() =>
-      '#${this.red.toRadixString(16)}${this.green.toRadixString(16)}${this.blue.toRadixString(16)}';
+extension WebGeoCoordExtensions on GeoCoord {
+  LatLng toLatLng() => LatLng(this.latitude, this.longitude);
 }
 
-extension WebRectangleExtensions on math.Rectangle<double> {
+extension WebGeoCoordBoundsExtensions on GeoCoordBounds {
   LatLngBounds toLatLngBounds() => LatLngBounds(
-        LatLng(this.top, this.left),
-        LatLng(this.width, this.height),
+        this.southwest.toLatLng(),
+        this.northeast.toLatLng(),
       );
 
-  math.Point<double> get center => math.Point(
-      this.top + (this.bottom - this.top / 2),
-      this.left + (this.right - this.left / 2));
+  GeoCoord get center => GeoCoord(
+        (this.northeast.latitude + this.southwest.latitude) / 2,
+        (this.northeast.longitude + this.southwest.longitude) / 2,
+      );
 }
 
 extension WebLatLngBoundsExtensions on LatLngBounds {
-  math.Rectangle<double> toRectangle() => math.Rectangle(
-        this.northEast.lng,
-        this.northEast.lat,
-        this.southWest.lng,
-        this.southWest.lat,
+  GeoCoordBounds toGeoCoordBounds() => GeoCoordBounds(
+        northeast: this.northEast.toGeoCoord(),
+        southwest: this.southWest.toGeoCoord(),
       );
+}
+
+extension WebColorExtensions on ui.Color {
+  String toHashString() =>
+      '#${this.red.toRadixString(16)}${this.green.toRadixString(16)}${this.blue.toRadixString(16)}';
 }
