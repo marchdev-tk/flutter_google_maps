@@ -79,13 +79,13 @@ class MobileMapPreferences {
   ///   * [myLocationEnabled] parameter.
   final bool myLocationButtonEnabled;
 
-  /// Enables or disables the indoor view from the map
+  /// Enables or disables the indoor view from the map.
   final bool indoorViewEnabled;
 
-  /// Enables or disables the traffic layer of the map
+  /// Enables or disables the traffic layer of the map.
   final bool trafficEnabled;
 
-  /// Enables or disables showing 3D buildings where available
+  /// Enables or disables showing 3D buildings where available.
   final bool buildingsEnabled;
 
   /// Padding to be set on map. See https://developers.google.com/maps/documentation/android-sdk/map#map_padding for more details.
@@ -106,13 +106,22 @@ class WebMapPreferences {
     this.zoomControl = false,
   });
 
+  /// Enables or disables streetViewControl.
   final bool streetViewControl;
+  /// Enables or disables fullscreenControl.
   final bool fullscreenControl;
+  /// Enables or disables mapTypeControl.
   final bool mapTypeControl;
+  /// Enables or disables scrollwheel.
   final bool scrollwheel;
+  /// Enables or disables panControl.
   final bool panControl;
+  /// Enables or disables overviewMapControl.
   final bool overviewMapControl;
+  /// Enables or disables rotateControl.
   final bool rotateControl;
+  /// Enables or disables scaleControl.
   final bool scaleControl;
+  /// Enables or disables zoomControl.
   final bool zoomControl;
 }

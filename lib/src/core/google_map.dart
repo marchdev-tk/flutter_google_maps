@@ -49,10 +49,10 @@ class GoogleMap extends StatefulWidget {
   /// The preferred maximum zoom level or null, if unbounded from above.
   final double maxZoom;
 
-  /// Set of mobile map preferences
+  /// Set of mobile map preferences.
   final MobileMapPreferences mobilePreferences;
 
-  /// Set of web map preferences
+  /// Set of web map preferences.
   final WebMapPreferences webPreferences;
 
   static const _zoom = 12.0;

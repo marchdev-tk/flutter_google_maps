@@ -18,7 +18,7 @@ abstract class MapOperations
 }
 
 abstract class MapMarkers {
-  /// Adds a marker to map by given [position].
+  /// Adds a marker to the map by given [position].
   ///
   /// [label] can be set only for `web`.
   ///
@@ -37,15 +37,15 @@ abstract class MapMarkers {
     String info,
   });
 
-  /// Removes a marker from map by given [position].
+  /// Removes a marker from the map by given [position].
   void removeMarker(GeoCoord position);
 
-  /// Removes all markers from map.
+  /// Removes all markers from the map.
   void clearMarkers();
 }
 
 abstract class MapDirections {
-  /// Adds a direction to map by given [origin] and [destination] coordinates.
+  /// Adds a direction to the map by given [origin] and [destination] coordinates.
   ///
   /// [origin] and [destination] are `dynamic` due to following variations:
   ///  * [LatLng], better use [Point], it will be converted into [LatLng]
@@ -65,7 +65,7 @@ abstract class MapDirections {
     String endInfo,
   });
 
-  /// Removes a direction from map by given [origin] and [destination] coordinates.
+  /// Removes a direction from the map by given [origin] and [destination] coordinates.
   ///
   /// [origin] and [destination] are `dynamic` due to following variations:
   ///  * [LatLng], better use [GeoCoord], it will be converted into [LatLng]
@@ -73,12 +73,12 @@ abstract class MapDirections {
   ///  * [String]
   void removeDirection(dynamic origin, dynamic destination);
 
-  /// Removes all directions from map.
+  /// Removes all directions from the map.
   void clearDirections();
 }
 
 abstract class MapPolygones {
-  /// Adds a polygon to map by given [id] and [points].
+  /// Adds a polygon to the map by given [id] and [points].
   ///
   /// Where [id] must be **unique**.
   ///
@@ -93,7 +93,7 @@ abstract class MapPolygones {
     double fillOpacity = 0.35,
   });
 
-  /// Removes and then adds a polygon to map by given [id] and [points].
+  /// Removes and then adds a polygon to the map by given [id] and [points].
   ///
   /// Where [id] must be **unique**.
   ///
@@ -108,9 +108,9 @@ abstract class MapPolygones {
     double fillOpacity = 0.35,
   });
 
-  /// Removes a polygon from map by given [id].
+  /// Removes a polygon from the map by given [id].
   void removePolygon(String id);
 
-  /// Removes all polygones from map.
+  /// Removes all polygones from the map.
   void clearPolygons();
 }
