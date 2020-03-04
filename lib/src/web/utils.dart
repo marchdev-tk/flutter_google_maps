@@ -3,19 +3,13 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ui' as ui show Color;
-import 'dart:math' as math show Point;
 
 import 'package:google_maps/google_maps.dart';
 import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, GeoCoordBounds;
 
 extension WebLatLngExtensions on LatLng {
-  math.Point<double> toPoint() => math.Point(this.lat, this.lng);
   GeoCoord toGeoCoord() => GeoCoord(this.lat, this.lng);
-}
-
-extension WebPointExtensions on math.Point<double> {
-  LatLng toLatLng() => LatLng(this.x, this.y);
 }
 
 extension WebGeoCoordExtensions on GeoCoord {

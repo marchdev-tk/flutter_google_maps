@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:math' as math show Point;
-
 import 'package:flutter/widgets.dart';
 
 import 'package:flinq/flinq.dart';
@@ -19,7 +17,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   final _markers = <String, Marker>{};
   final _polygons = <String, Polygon>{};
   final _polylines = <String, Polyline>{};
-  final _directionMarkerCoords = <math.Point<double>, dynamic>{};
+  final _directionMarkerCoords = <GeoCoord, dynamic>{};
 
   GoogleMapController _controller;
 
@@ -69,7 +67,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void addMarker(
-    math.Point<double> position, {
+    GeoCoord position, {
     String label,
     String icon,
     String info,
@@ -80,8 +78,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
         throw ArgumentError.notNull('position');
       }
 
-      if (position.x == null || position.y == null) {
-        throw ArgumentError.notNull('position.x && position.y');
+      if (position.latitude == null || position.longitude == null) {
+        throw ArgumentError.notNull('position.latitude && position.longitude');
       }
 
       return true;
@@ -97,7 +95,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       position: position.toLatLng(),
       icon: icon == null
           ? BitmapDescriptor.defaultMarker
-          : await _getBmpDescFromAsset(icon),
+          : await _getBmpDescFromAsset('${fixAssetPath(icon)}$icon'),
       infoWindow: info != null ? InfoWindow(title: info) : null,
       zIndex: zIndex?.toDouble(),
     );
@@ -106,14 +104,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   }
 
   @override
-  void removeMarker(math.Point<double> position) {
+  void removeMarker(GeoCoord position) {
     assert(() {
       if (position == null) {
         throw ArgumentError.notNull('position');
       }
 
-      if (position.x == null || position.y == null) {
-        throw ArgumentError.notNull('position.x && position.y');
+      if (position.latitude == null || position.longitude == null) {
+        throw ArgumentError.notNull('position.latitude && position.longitude');
       }
 
       return true;
@@ -153,10 +151,11 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }());
 
     final request = DirectionsRequest(
-      origin: origin is math.Point ? LatLng(origin.x, origin.y) : origin,
-      destination: destination is math.Point<double>
-          ? destination.toLatLng()
-          : destination,
+      origin: origin is GeoCoord
+          ? LatLng(origin.latitude, origin.longitude)
+          : origin,
+      destination:
+          destination is GeoCoord ? destination.toLatLng() : destination,
       travelMode: TravelMode.driving,
     );
     directionsService.route(
@@ -174,39 +173,39 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
           final leg = response?.routes?.firstOrNull?.legs?.firstOrNull;
 
-          final startLatLng = leg?.startLocation?.toLatLng();
+          final startLatLng = leg?.startLocation;
           if (startLatLng != null) {
-            _directionMarkerCoords[startLatLng.toPoint()] = origin;
+            _directionMarkerCoords[startLatLng] = origin;
             if (startIcon != null || startInfo != null || startLabel != null) {
               addMarker(
-                startLatLng.toPoint(),
-                icon: startIcon /* ?? 'assets/images/marker_a.png' */,
+                startLatLng,
+                icon: startIcon ?? 'assets/images/marker_a.png',
                 info: startInfo ?? leg.startAddress,
                 label: startLabel,
               );
             } else {
               addMarker(
-                startLatLng.toPoint(),
-                // icon: 'assets/images/marker_a.png', // TODO: figure out wtf is happening
+                startLatLng,
+                icon: 'assets/images/marker_a.png',
                 info: leg.startAddress,
               );
             }
           }
 
-          final endLatLng = leg?.endLocation?.toLatLng();
+          final endLatLng = leg?.endLocation;
           if (endLatLng != null) {
-            _directionMarkerCoords[endLatLng.toPoint()] = destination;
+            _directionMarkerCoords[endLatLng] = destination;
             if (endIcon != null || endInfo != null || endLabel != null) {
               addMarker(
-                endLatLng.toPoint(),
-                icon: endIcon /*  ?? 'assets/images/marker_b.png' */,
+                endLatLng,
+                icon: endIcon ?? 'assets/images/marker_b.png',
                 info: endInfo ?? leg.endAddress,
                 label: endLabel,
               );
             } else {
               addMarker(
-                endLatLng.toPoint(),
-                // icon: 'assets/images/marker_b.png',
+                endLatLng,
+                icon: 'assets/images/marker_b.png',
                 info: leg.endAddress,
               );
             }
@@ -217,7 +216,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
             polylineId: polylineId,
             points: response?.routes?.firstOrNull?.overviewPath
                     ?.mapList((_) => _.toLatLng()) ??
-                [startLatLng, endLatLng],
+                [startLatLng?.toLatLng(), endLatLng?.toLatLng()],
             color: const Color(0xcc2196F3),
             startCap: Cap.roundCap,
             endCap: Cap.roundCap,
@@ -245,12 +244,12 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }());
 
     var value = _polylines.remove('${origin}_$destination');
-    final start = value?.points?.firstOrNull?.toPoint();
+    final start = value?.points?.firstOrNull?.toGeoCoord();
     if (start != null) {
       removeMarker(start);
       _directionMarkerCoords.remove(start);
     }
-    final end = value?.points?.lastOrNull?.toPoint();
+    final end = value?.points?.lastOrNull?.toGeoCoord();
     if (end != null) {
       removeMarker(end);
       _directionMarkerCoords.remove(end);
@@ -261,12 +260,12 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   @override
   void clearDirections() {
     for (var polyline in _polylines.values) {
-      final start = polyline?.points?.firstOrNull?.toPoint();
+      final start = polyline?.points?.firstOrNull?.toGeoCoord();
       if (start != null) {
         removeMarker(start);
         _directionMarkerCoords.remove(start);
       }
-      final end = polyline?.points?.lastOrNull?.toPoint();
+      final end = polyline?.points?.lastOrNull?.toGeoCoord();
       if (end != null) {
         removeMarker(end);
         _directionMarkerCoords.remove(end);
@@ -279,7 +278,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   @override
   void addPolygon(
     String id,
-    Iterable<math.Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -296,7 +295,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       }
 
       if (points.isEmpty) {
-        throw ArgumentError.value(<math.Point<double>>[], 'points');
+        throw ArgumentError.value(<GeoCoord>[], 'points');
       }
 
       if (points.length < 3) {
@@ -323,7 +322,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   @override
   void editPolygon(
     String id,
-    Iterable<math.Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,

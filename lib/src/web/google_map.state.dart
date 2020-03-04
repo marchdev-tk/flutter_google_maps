@@ -4,7 +4,6 @@
 
 import 'dart:html';
 import 'dart:ui' as ui;
-import 'dart:math' as math show Point;
 
 import 'package:flutter/widgets.dart';
 
@@ -12,7 +11,7 @@ import 'package:uuid/uuid.dart';
 import 'package:flinq/flinq.dart';
 import 'package:google_maps/google_maps.dart';
 import 'package:google_directions_api/google_directions_api.dart'
-    show GeoCoordBounds;
+    show GeoCoord, GeoCoordBounds;
 
 import 'utils.dart';
 import '../core/google_map.dart';
@@ -56,7 +55,7 @@ class GoogleMapState extends GoogleMapStateBase {
 
   @override
   void addMarker(
-    math.Point<double> position, {
+    GeoCoord position, {
     String label,
     String icon,
     String info,
@@ -66,8 +65,8 @@ class GoogleMapState extends GoogleMapStateBase {
         throw ArgumentError.notNull('position');
       }
 
-      if (position.x == null || position.y == null) {
-        throw ArgumentError.notNull('position.x && position.y');
+      if (position.latitude == null || position.longitude == null) {
+        throw ArgumentError.notNull('position.latitude && position.longitude');
       }
 
       return true;
@@ -79,7 +78,7 @@ class GoogleMapState extends GoogleMapStateBase {
         final marker = Marker()
           ..map = _map
           ..label = label
-          ..icon = icon != null ? 'assets/$icon' : null
+          ..icon = icon != null ? '${fixAssetPath(icon)}assets/$icon' : null
           ..position = position.toLatLng();
 
         if (info != null) {
@@ -108,14 +107,14 @@ class GoogleMapState extends GoogleMapStateBase {
   }
 
   @override
-  void removeMarker(math.Point<double> position) {
+  void removeMarker(GeoCoord position) {
     assert(() {
       if (position == null) {
         throw ArgumentError.notNull('position');
       }
 
-      if (position.x == null || position.y == null) {
-        throw ArgumentError.notNull('position.x && position.y');
+      if (position.latitude == null || position.longitude == null) {
+        throw ArgumentError.notNull('position.latitude && position.longitude');
       }
 
       return true;
@@ -182,10 +181,11 @@ class GoogleMapState extends GoogleMapStateBase {
         direction.map = _map;
 
         final request = DirectionsRequest()
-          ..origin = origin is math.Point ? LatLng(origin.x, origin.y) : origin
-          ..destination = destination is math.Point<double>
-              ? destination.toLatLng()
-              : destination
+          ..origin = origin is GeoCoord
+              ? LatLng(origin.latitude, origin.longitude)
+              : origin
+          ..destination =
+              destination is GeoCoord ? destination.toLatLng() : destination
           ..travelMode = TravelMode.DRIVING;
         directionsService.route(
           request,
@@ -201,14 +201,14 @@ class GoogleMapState extends GoogleMapStateBase {
                     startInfo != null ||
                     startLabel != null) {
                   addMarker(
-                    startLatLng.toPoint(),
+                    startLatLng.toGeoCoord(),
                     icon: startIcon,
                     info: startInfo ?? leg.startAddress,
                     label: startLabel,
                   );
                 } else {
                   addMarker(
-                    startLatLng.toPoint(),
+                    startLatLng.toGeoCoord(),
                     icon: 'assets/images/marker_a.png',
                     info: leg.startAddress,
                   );
@@ -219,14 +219,14 @@ class GoogleMapState extends GoogleMapStateBase {
               if (endLatLng != null) {
                 if (endIcon != null || endInfo != null || endLabel != null) {
                   addMarker(
-                    endLatLng.toPoint(),
+                    endLatLng.toGeoCoord(),
                     icon: endIcon,
                     info: endInfo ?? leg.endAddress,
                     label: endLabel,
                   );
                 } else {
                   addMarker(
-                    endLatLng.toPoint(),
+                    endLatLng.toGeoCoord(),
                     icon: 'assets/images/marker_b.png',
                     info: leg.endAddress,
                   );
@@ -259,13 +259,13 @@ class GoogleMapState extends GoogleMapStateBase {
     value?.map = null;
     final start = value
         ?.directions?.routes?.firstOrNull?.legs?.firstOrNull?.startLocation
-        ?.toPoint();
+        ?.toGeoCoord();
     if (start != null) {
       removeMarker(start);
     }
     final end = value
         ?.directions?.routes?.firstOrNull?.legs?.lastOrNull?.endLocation
-        ?.toPoint();
+        ?.toGeoCoord();
     if (end != null) {
       removeMarker(end);
     }
@@ -278,13 +278,13 @@ class GoogleMapState extends GoogleMapStateBase {
       direction?.map = null;
       final start = direction
           ?.directions?.routes?.firstOrNull?.legs?.firstOrNull?.startLocation
-          ?.toPoint();
+          ?.toGeoCoord();
       if (start != null) {
         removeMarker(start);
       }
       final end = direction
           ?.directions?.routes?.firstOrNull?.legs?.lastOrNull?.endLocation
-          ?.toPoint();
+          ?.toGeoCoord();
       if (end != null) {
         removeMarker(end);
       }
@@ -296,7 +296,7 @@ class GoogleMapState extends GoogleMapStateBase {
   @override
   void addPolygon(
     String id,
-    Iterable<math.Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -313,7 +313,7 @@ class GoogleMapState extends GoogleMapStateBase {
       }
 
       if (points.isEmpty) {
-        throw ArgumentError.value(<math.Point<double>>[], 'points');
+        throw ArgumentError.value(<GeoCoord>[], 'points');
       }
 
       if (points.length < 3) {
@@ -342,7 +342,7 @@ class GoogleMapState extends GoogleMapStateBase {
   @override
   void editPolygon(
     String id,
-    Iterable<math.Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,

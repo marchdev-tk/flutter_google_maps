@@ -5,8 +5,6 @@ Demonstrates how to use the flutter_google_maps package.
 ## Usage
 
 ```dart
-import 'dart:math' show Point;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_google_maps/flutter_google_maps.dart';
@@ -99,11 +97,11 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Icon(Icons.pin_drop),
           onPressed: () {
             GoogleMap.of(_key).addMarker(
-              Point(33.875513, -117.550257),
+              GeoCoord(33.875513, -117.550257),
               info: 'test info',
             );
             GoogleMap.of(_key).addMarker(
-              Point(33.775513, -117.450257),
+              GeoCoord(33.775513, -117.450257),
               icon: 'assets/images/map-marker-warehouse.png',
               info: contentString,
             );
@@ -114,12 +112,12 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Icon(Icons.directions),
           onPressed: () {
             GoogleMap.of(_key).addDirection(
-              'salinas municipal airport sns',
-              '1353 Dayton Street, Unit B, salinas',
+              'San Francisco, CA',
+              'San Jose, CA',
               startLabel: '1',
-              startInfo: 'salinas municipal airport sns',
+              startInfo: 'San Francisco, CA',
               endIcon: 'assets/images/map-marker-warehouse.png',
-              endInfo: '1353 Dayton Street, Unit B, salinas',
+              endInfo: 'San Jose, CA',
             );
           },
         ),
@@ -153,10 +151,20 @@ class _MyHomePageState extends State<MyHomePage> {
               child: FloatingActionButton(
                 child: Icon(Icons.person_pin_circle),
                 onPressed: () {
-                  GoogleMap.of(_key).moveCamera(GeoCoordBounds(
+                  final bounds = GeoCoordBounds(
                     northeast: GeoCoord(34.021307, -117.432317),
                     southwest: GeoCoord(33.835745, -117.712785),
-                  ));
+                  );
+                  GoogleMap.of(_key).moveCamera(bounds);
+                  GoogleMap.of(_key).addMarker(
+                    GeoCoord(
+                      (bounds.northeast.latitude + bounds.southwest.latitude) /
+                          2,
+                      (bounds.northeast.longitude +
+                              bounds.southwest.longitude) /
+                          2,
+                    ),
+                  );
                 },
               ),
             ),
@@ -213,58 +221,58 @@ const contentString = r'''
 </div>
 ''';
 
-const polygon = <Point<double>>[
-  Point<double>(32.707868, -117.191018),
-  Point<double>(32.705645, -117.191096),
-  Point<double>(32.697756, -117.166664),
-  Point<double>(32.686486, -117.163206),
-  Point<double>(32.675876, -117.169452),
-  Point<double>(32.674726, -117.165233),
-  Point<double>(32.679833, -117.158487),
-  Point<double>(32.677571, -117.153893),
-  Point<double>(32.671987, -117.160079),
-  Point<double>(32.667547, -117.160477),
-  Point<double>(32.654748, -117.147579),
-  Point<double>(32.651933, -117.150312),
-  Point<double>(32.649676, -117.144334),
-  Point<double>(32.631665, -117.138201),
-  Point<double>(32.632033, -117.132249),
-  Point<double>(32.630156, -117.137234),
-  Point<double>(32.628072, -117.136479),
-  Point<double>(32.630315, -117.131443),
-  Point<double>(32.625930, -117.135312),
-  Point<double>(32.623754, -117.131664),
-  Point<double>(32.627465, -117.130883),
-  Point<double>(32.622598, -117.128791),
-  Point<double>(32.622622, -117.133183),
-  Point<double>(32.618690, -117.133634),
-  Point<double>(32.618980, -117.128403),
-  Point<double>(32.609847, -117.132502),
-  Point<double>(32.604198, -117.125333),
-  Point<double>(32.588260, -117.122032),
-  Point<double>(32.591164, -117.116851),
-  Point<double>(32.587601, -117.105968),
-  Point<double>(32.583792, -117.104434),
-  Point<double>(32.570566, -117.101382),
-  Point<double>(32.569256, -117.122378),
-  Point<double>(32.560825, -117.122903),
-  Point<double>(32.557753, -117.131040),
-  Point<double>(32.542737, -117.124883),
-  Point<double>(32.534156, -117.126062),
-  Point<double>(32.563255, -117.134963),
-  Point<double>(32.584055, -117.134263),
-  Point<double>(32.619405, -117.140001),
-  Point<double>(32.655293, -117.157349),
-  Point<double>(32.669944, -117.169624),
-  Point<double>(32.682710, -117.189445),
-  Point<double>(32.685297, -117.208773),
-  Point<double>(32.679814, -117.224882),
-  Point<double>(32.697212, -117.227058),
-  Point<double>(32.707701, -117.219816),
-  Point<double>(32.711931, -117.214107),
-  Point<double>(32.715026, -117.196521),
-  Point<double>(32.713053, -117.189703),
-  Point<double>(32.707868, -117.191018),
+const polygon = <GeoCoord>[
+  GeoCoord(32.707868, -117.191018),
+  GeoCoord(32.705645, -117.191096),
+  GeoCoord(32.697756, -117.166664),
+  GeoCoord(32.686486, -117.163206),
+  GeoCoord(32.675876, -117.169452),
+  GeoCoord(32.674726, -117.165233),
+  GeoCoord(32.679833, -117.158487),
+  GeoCoord(32.677571, -117.153893),
+  GeoCoord(32.671987, -117.160079),
+  GeoCoord(32.667547, -117.160477),
+  GeoCoord(32.654748, -117.147579),
+  GeoCoord(32.651933, -117.150312),
+  GeoCoord(32.649676, -117.144334),
+  GeoCoord(32.631665, -117.138201),
+  GeoCoord(32.632033, -117.132249),
+  GeoCoord(32.630156, -117.137234),
+  GeoCoord(32.628072, -117.136479),
+  GeoCoord(32.630315, -117.131443),
+  GeoCoord(32.625930, -117.135312),
+  GeoCoord(32.623754, -117.131664),
+  GeoCoord(32.627465, -117.130883),
+  GeoCoord(32.622598, -117.128791),
+  GeoCoord(32.622622, -117.133183),
+  GeoCoord(32.618690, -117.133634),
+  GeoCoord(32.618980, -117.128403),
+  GeoCoord(32.609847, -117.132502),
+  GeoCoord(32.604198, -117.125333),
+  GeoCoord(32.588260, -117.122032),
+  GeoCoord(32.591164, -117.116851),
+  GeoCoord(32.587601, -117.105968),
+  GeoCoord(32.583792, -117.104434),
+  GeoCoord(32.570566, -117.101382),
+  GeoCoord(32.569256, -117.122378),
+  GeoCoord(32.560825, -117.122903),
+  GeoCoord(32.557753, -117.131040),
+  GeoCoord(32.542737, -117.124883),
+  GeoCoord(32.534156, -117.126062),
+  GeoCoord(32.563255, -117.134963),
+  GeoCoord(32.584055, -117.134263),
+  GeoCoord(32.619405, -117.140001),
+  GeoCoord(32.655293, -117.157349),
+  GeoCoord(32.669944, -117.169624),
+  GeoCoord(32.682710, -117.189445),
+  GeoCoord(32.685297, -117.208773),
+  GeoCoord(32.679814, -117.224882),
+  GeoCoord(32.697212, -117.227058),
+  GeoCoord(32.707701, -117.219816),
+  GeoCoord(32.711931, -117.214107),
+  GeoCoord(32.715026, -117.196521),
+  GeoCoord(32.713053, -117.189703),
+  GeoCoord(32.707868, -117.191018),
 ];
 ```
 

@@ -3,10 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ui' show Color;
-import 'dart:math' show Point;
 
 import 'package:google_directions_api/google_directions_api.dart'
-    show GeoCoordBounds;
+    show GeoCoord, GeoCoordBounds;
 
 abstract class MapOperations
     implements MapMarkers, MapDirections, MapPolygones {
@@ -32,14 +31,14 @@ abstract class MapMarkers {
   ///
   /// If marker with same [position] have been already added, addition of a new marker will be ignored.
   void addMarker(
-    Point<double> position, {
+    GeoCoord position, {
     String label,
     String icon,
     String info,
   });
 
   /// Removes a marker from map by given [position].
-  void removeMarker(Point<double> position);
+  void removeMarker(GeoCoord position);
 
   /// Removes all markers from map.
   void clearMarkers();
@@ -69,7 +68,7 @@ abstract class MapDirections {
   /// Removes a direction from map by given [origin] and [destination] coordinates.
   ///
   /// [origin] and [destination] are `dynamic` due to following variations:
-  ///  * [LatLng], better use [Point], it will be converted into [LatLng]
+  ///  * [LatLng], better use [GeoCoord], it will be converted into [LatLng]
   ///  * [Place]
   ///  * [String]
   void removeDirection(dynamic origin, dynamic destination);
@@ -86,7 +85,7 @@ abstract class MapPolygones {
   /// If [id] have been already added, addition of a new polygon will be ignored.
   void addPolygon(
     String id,
-    Iterable<Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -101,7 +100,7 @@ abstract class MapPolygones {
   /// If [id] have been already added, addition of a new polygon will be ignored.
   void editPolygon(
     String id,
-    Iterable<Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,

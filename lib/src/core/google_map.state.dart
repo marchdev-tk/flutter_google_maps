@@ -2,12 +2,10 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:math';
-
 import 'package:flutter/widgets.dart';
 
 import 'package:google_directions_api/google_directions_api.dart'
-    show GeoCoordBounds;
+    show GeoCoord, GeoCoordBounds;
 
 import 'google_map.dart';
 
@@ -35,7 +33,7 @@ class GoogleMapState extends GoogleMapStateBase {
 
   @override
   void addMarker(
-    Point<double> position, {
+    GeoCoord position, {
     String label,
     String icon,
     String info,
@@ -45,7 +43,7 @@ class GoogleMapState extends GoogleMapStateBase {
   @override
   void addPolygon(
     String id,
-    Iterable<Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -66,7 +64,7 @@ class GoogleMapState extends GoogleMapStateBase {
   @override
   void editPolygon(
     String id,
-    Iterable<Point<double>> points, {
+    Iterable<GeoCoord> points, {
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,
@@ -79,7 +77,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void removeDirection(origin, destination) => throw UnimplementedError();
 
   @override
-  void removeMarker(Point<double> position) => throw UnimplementedError();
+  void removeMarker(GeoCoord position) => throw UnimplementedError();
 
   @override
   void removePolygon(String id) => throw UnimplementedError();

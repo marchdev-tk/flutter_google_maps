@@ -59,6 +59,8 @@ class GoogleMap extends StatefulWidget {
   static const _defaultLat = 34.0469058;
   static const _defaultLng = -118.3503948;
 
+  /// Gets [MapOperations] interface via provided `key` of
+  /// [GoogleMapStateBase] state.
   static MapOperations of(GlobalKey<GoogleMapStateBase> key) =>
       key.currentState;
 
@@ -73,4 +75,10 @@ class GoogleMap extends StatefulWidget {
 }
 
 abstract class GoogleMapStateBase extends State<GoogleMap>
-    implements MapOperations {}
+    implements MapOperations {
+  @protected
+  String fixAssetPath(String icon) =>
+      icon.endsWith('/marker_a.png') || icon.endsWith('/marker_b.png')
+          ? 'packages/flutter_google_maps/'
+          : '';
+}
