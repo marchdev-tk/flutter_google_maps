@@ -71,7 +71,7 @@ And now you're ready to go.
 **`MapType` is one of following variants:**
 
   * `none` -> do not display map tiles
-  * `normal` -> normal tiles (traffic and labels, subtle terrain information)
+  * `roadmap` -> normal tiles (traffic and labels, subtle terrain information)
   * `satellite` -> satellite imaging tiles (aerial photos)
   * `terrain` -> terrain tiles (indicates type and height of terrain)
   * `hybrid` -> hybrid tiles (satellite images with some labels/overlays)
