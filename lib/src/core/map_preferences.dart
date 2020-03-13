@@ -10,7 +10,7 @@ enum MapType {
   none,
 
   /// Normal tiles (traffic and labels, subtle terrain information).
-  normal,
+  roadmap,
 
   /// Satellite imaging tiles (aerial photos)
   satellite,
