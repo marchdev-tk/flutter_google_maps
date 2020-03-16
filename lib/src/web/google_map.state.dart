@@ -430,9 +430,15 @@ class GoogleMapState extends GoogleMapStateBase {
     });
 
     return LayoutBuilder(
-      builder: (context, constraints) => Container(
-        constraints: BoxConstraints(maxHeight: constraints.maxHeight),
-        child: HtmlElementView(viewType: htmlId),
+      builder: (context, constraints) => GestureDetector(
+        onPanUpdate: widget.webPreferences.gestures ? null : (_) {},
+        onScaleUpdate: widget.webPreferences.gestures ? null : (_) {},
+        onVerticalDragUpdate: widget.webPreferences.gestures ? null : (_) {},
+        onHorizontalDragUpdate: widget.webPreferences.gestures ? null : (_) {},
+        child: Container(
+          constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+          child: HtmlElementView(viewType: htmlId),
+        ),
       ),
     );
   }

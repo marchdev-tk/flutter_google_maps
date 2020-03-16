@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.1.0]
+
+* Added gesture boolean to WebMapPreferences, that indicates whether to enable gestures or not
+
 ## [3.0.0]
 
 * Implemented setting up Map Style

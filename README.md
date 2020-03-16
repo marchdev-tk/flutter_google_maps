@@ -103,6 +103,7 @@ And now you're ready to go.
 | rotateControl      | bool | Enables or disables rotateControl      |
 | scaleControl       | bool | Enables or disables scaleControl       |
 | zoomControl        | bool | Enables or disables zoomControl        |
+| gestures           | bool | Enables or disables gestures           |
 
 ### To prepare for interacting with GoogleMap you will need to:
 

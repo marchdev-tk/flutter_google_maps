@@ -104,6 +104,7 @@ class WebMapPreferences {
     this.rotateControl = false,
     this.scaleControl = false,
     this.zoomControl = false,
+    this.gestures = true,
   });
 
   /// Enables or disables streetViewControl.
@@ -132,4 +133,7 @@ class WebMapPreferences {
 
   /// Enables or disables zoomControl.
   final bool zoomControl;
+
+  /// Enables or disables gestures.
+  final bool gestures;
 }
