@@ -8,14 +8,13 @@ import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, GeoCoordBounds;
 
 /// Interface of setting up map operations including:
-/// 
+///
 ///  * Markers
 ///  * Directions
 ///  * Polygons
 ///  * Camera position
 ///  * Map Style
-abstract class MapOperations
-    implements MapMarkers, MapDirections, MapPolygons {
+abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
   /// Moves camera to the new bounds.
   void moveCamera(
     GeoCoordBounds newBounds, {
