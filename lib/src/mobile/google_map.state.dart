@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_directions_api/google_directions_api.dart';
 
 import 'utils.dart';
+import '../core/utils.dart' as exception;
 import '../core/google_map.dart' as gmap;
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
@@ -62,6 +63,15 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
         newBounds.toLatLngBounds(),
         padding ?? 0,
       ));
+    }
+  }
+
+  @override
+  void changeMapStyle(String mapStyle) {
+    try {
+      _controller.setMapStyle(mapStyle);
+    } on MapStyleException catch (e) {
+      throw exception.MapStyleException(e.cause);
     }
   }
 
@@ -374,8 +384,10 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               target: widget.initialPosition.toLatLng(),
               zoom: widget.initialZoom,
             ),
-            onMapCreated: (GoogleMapController controller) =>
-                _controller = controller,
+            onMapCreated: (GoogleMapController controller) {
+              _controller = controller;
+              _controller.setMapStyle(widget.mapStyle);
+            },
             padding: widget.mobilePreferences.padding,
             compassEnabled: widget.mobilePreferences.compassEnabled,
             trafficEnabled: widget.mobilePreferences.trafficEnabled,

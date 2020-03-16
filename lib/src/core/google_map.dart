@@ -21,6 +21,7 @@ class GoogleMap extends StatefulWidget {
     Key key,
     this.minZoom,
     this.maxZoom,
+    this.mapStyle,
     this.initialZoom = _zoom,
     this.mapType = MapType.roadmap,
     this.initialPosition = const GeoCoord(_defaultLat, _defaultLng),
@@ -47,6 +48,21 @@ class GoogleMap extends StatefulWidget {
 
   /// The preferred maximum zoom level or null, if unbounded from above.
   final double maxZoom;
+
+  /// Sets the styling of the base map.
+  ///
+  /// Set to `null` to clear any previous custom styling.
+  ///
+  /// If problems were detected with the [mapStyle], including un-parsable
+  /// styling JSON, unrecognized feature type, unrecognized element type, or
+  /// invalid styler keys: [MapStyleException] is thrown and the current
+  /// style is left unchanged.
+  ///
+  /// The style string can be generated using [map style tool](https://mapstyle.withgoogle.com/).
+  /// Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
+  /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
+  /// style reference for more information regarding the supported styles.
+  final String mapStyle;
 
   /// Set of mobile map preferences.
   final MobileMapPreferences mobilePreferences;

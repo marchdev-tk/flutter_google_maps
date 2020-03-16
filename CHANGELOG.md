@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0]
+
+* Implemented setting up Map Style
+
 ## [2.0.0]
 
 * Fixed roadmap/normal Map Type

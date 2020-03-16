@@ -31,8 +31,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  GlobalKey<GoogleMapStateBase> _key = GlobalKey<GoogleMapStateBase>();
+  final _key = GlobalKey<GoogleMapStateBase>();
   bool _polygonAdded = false;
+  bool _darkMapStyle = false;
 
   List<Widget> _buildClearButtons() => [
         RaisedButton.icon(
@@ -133,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 initialZoom: 12,
                 initialPosition:
                     GeoCoord(34.0469058, -118.3503948), // Los Angeles, CA
-                mapType: MapType.terrain,
+                mapType: MapType.roadmap,
                 mobilePreferences: const MobileMapPreferences(
                   trafficEnabled: true,
                 ),
@@ -166,6 +167,26 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Positioned(
+              top: 16,
+              right: kIsWeb ? 60 : 16,
+              child: FloatingActionButton(
+                onPressed: () {
+                  if (_darkMapStyle) {
+                    GoogleMap.of(_key).changeMapStyle(null);
+                  } else {
+                    GoogleMap.of(_key).changeMapStyle(dartMapStyle);
+                  }
+
+                  setState(() => _darkMapStyle = !_darkMapStyle);
+                },
+                backgroundColor: _darkMapStyle ? Colors.black : Colors.white,
+                child: Icon(
+                  _darkMapStyle ? Icons.wb_sunny : Icons.brightness_3,
+                  color: _darkMapStyle ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+            Positioned(
               left: 16,
               right: kIsWeb ? 60 : 16,
               bottom: 16,
@@ -189,6 +210,195 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
 }
+
+const dartMapStyle = r'''
+[
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#212121"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#212121"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.country",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.locality",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#181818"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#1b1b1b"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#2c2c2c"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#8a8a8a"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#373737"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#3c3c3c"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway.controlled_access",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#4e4e4e"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#000000"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#3d3d3d"
+      }
+    ]
+  }
+]
+''';
 
 const contentString = r'''
 <div id="content">

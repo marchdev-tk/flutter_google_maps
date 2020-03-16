@@ -7,16 +7,39 @@ import 'dart:ui' show Color;
 import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, GeoCoordBounds;
 
+/// Interface of setting up map operations including:
+/// 
+///  * Markers
+///  * Directions
+///  * Polygons
+///  * Camera position
+///  * Map Style
 abstract class MapOperations
-    implements MapMarkers, MapDirections, MapPolygones {
+    implements MapMarkers, MapDirections, MapPolygons {
   /// Moves camera to the new bounds.
   void moveCamera(
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
   });
+
+  /// Sets the styling of the base map.
+  ///
+  /// Set to `null` to clear any previous custom styling.
+  ///
+  /// If problems were detected with the [mapStyle], including un-parsable
+  /// styling JSON, unrecognized feature type, unrecognized element type, or
+  /// invalid styler keys: [MapStyleException] is thrown and the current
+  /// style is left unchanged.
+  ///
+  /// The style string can be generated using [map style tool](https://mapstyle.withgoogle.com/).
+  /// Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
+  /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
+  /// style reference for more information regarding the supported styles.
+  void changeMapStyle(String mapStyle);
 }
 
+/// Interface of setting up markers
 abstract class MapMarkers {
   /// Adds a marker to the map by given [position].
   ///
@@ -44,6 +67,7 @@ abstract class MapMarkers {
   void clearMarkers();
 }
 
+/// Interface of setting up directions
 abstract class MapDirections {
   /// Adds a direction to the map by given [origin] and [destination] coordinates.
   ///
@@ -77,7 +101,8 @@ abstract class MapDirections {
   void clearDirections();
 }
 
-abstract class MapPolygones {
+/// Interface of setting up polygons
+abstract class MapPolygons {
   /// Adds a polygon to the map by given [id] and [points].
   ///
   /// Where [id] must be **unique**.

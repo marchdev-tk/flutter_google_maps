@@ -15,6 +15,7 @@ import 'package:google_directions_api/google_directions_api.dart'
 
 import 'utils.dart';
 import '../core/google_map.dart';
+import '../core/utils.dart' as exception;
 
 class GoogleMapState extends GoogleMapStateBase {
   final htmlId = Uuid().v1();
@@ -27,6 +28,7 @@ class GoogleMapState extends GoogleMapStateBase {
   final _directions = <String, DirectionsRenderer>{};
 
   GMap _map;
+  MapOptions _mapOptions;
 
   @override
   void moveCamera(
@@ -51,6 +53,16 @@ class GoogleMapState extends GoogleMapStateBase {
       _map.fitBounds(newBounds.toLatLngBounds());
     }
     _map.zoom = zoom;
+  }
+
+  @override
+  void changeMapStyle(String mapStyle) {
+    try {
+      _mapOptions.styles = mapStyle?.parseMapStyle();
+      _map.options = _mapOptions;
+    } catch (e) {
+      throw exception.MapStyleException(e.toString());
+    }
   }
 
   @override
@@ -387,7 +399,7 @@ class GoogleMapState extends GoogleMapStateBase {
 
   @override
   Widget build(BuildContext context) {
-    final mapOptions = MapOptions()
+    _mapOptions = MapOptions()
       ..zoom = widget.initialZoom
       ..center = widget.initialPosition.toLatLng()
       ..streetViewControl = widget.webPreferences.streetViewControl
@@ -401,6 +413,7 @@ class GoogleMapState extends GoogleMapStateBase {
       ..zoomControl = widget.webPreferences.zoomControl
       ..minZoom = widget.minZoom
       ..maxZoom = widget.maxZoom
+      ..styles = widget.mapStyle?.parseMapStyle()
       ..mapTypeId = widget.mapType.toString().split('.')[1];
 
     // ignore: undefined_prefixed_name
@@ -411,7 +424,7 @@ class GoogleMapState extends GoogleMapStateBase {
         ..style.height = '100%'
         ..style.border = 'none';
 
-      _map = GMap(elem, mapOptions);
+      _map = GMap(elem, _mapOptions);
 
       return elem;
     });

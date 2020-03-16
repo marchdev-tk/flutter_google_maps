@@ -19,6 +19,9 @@ class GoogleMapState extends GoogleMapStateBase {
       throw UnimplementedError();
 
   @override
+  void changeMapStyle(String mapStyle) => throw UnimplementedError();
+
+  @override
   void addDirection(
     origin,
     destination, {

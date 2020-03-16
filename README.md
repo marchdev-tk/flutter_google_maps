@@ -65,6 +65,7 @@ And now you're ready to go.
 | mapType           | MapType              | Type of map tiles to be rendered                                  |
 | minZoom           | double               | The preferred minimum zoom level or null, if unbounded from below |
 | maxZoom           | double               | The preferred maximum zoom level or null, if unbounded from above |
+| mapStyle          | String               | Sets the styling of the base map                                  |
 | mobilePreferences | MobileMapPreferences | Set of mobile map preferences                                     |
 | webPreferences    | WebMapPreferences    | Set of web map preferences                                        |
 
@@ -132,6 +133,17 @@ Here's list of interactions:
     double padding = 0,
     bool animated = true,
   });
+  ```
+
+* Change Map Style.
+
+  The style string can be generated using [map style tool](https://mapstyle.withgoogle.com/).
+  Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
+  and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
+  style reference for more information regarding the supported styles.
+
+  ```dart
+  void changeMapStyle(String mapStyle);
   ```
 
 * Add marker to the map by given [position]
