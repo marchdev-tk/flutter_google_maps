@@ -71,6 +71,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String label,
     String icon,
     String info,
+    ui.VoidCallback onTap,
   }) {
     assert(() {
       if (position == null) {
@@ -93,12 +94,19 @@ class GoogleMapState extends GoogleMapStateBase {
           ..icon = icon != null ? '${fixAssetPath(icon)}assets/$icon' : null
           ..position = position.toLatLng();
 
-        if (info != null) {
+        if (info != null || onTap != null) {
+          // potential leak
           marker.onClick.listen((_) {
+            if (onTap != null) {
+              onTap();
+              return;
+            }
+
             final key = position.toString();
 
             if (_infos[key] == null) {
               _infos[key] = InfoWindow(InfoWindowOptions()..content = info);
+              // potential leak
               _infos[key].onCloseclick.listen((_) => _infoState[key] = false);
             }
 

@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, VoidCallback;
 
 import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, GeoCoordBounds;
@@ -51,12 +51,15 @@ abstract class MapMarkers {
   ///  * For `web` [info] could be a [String] or `HTML String`
   ///  * For `mobile` [info] could be only a [String]
   ///
+  /// If [onTap] is not null, [info] popup will not be shown.
+  ///
   /// If marker with same [position] have been already added, addition of a new marker will be ignored.
   void addMarker(
     GeoCoord position, {
     String label,
     String icon,
     String info,
+    VoidCallback onTap,
   });
 
   /// Removes a marker from the map by given [position].

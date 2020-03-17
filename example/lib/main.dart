@@ -162,6 +162,21 @@ class _MyHomePageState extends State<MyHomePage> {
                               bounds.southwest.longitude) /
                           2,
                     ),
+                    onTap: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          content: Text(
+                              'This dialog was opened by tapping on the marker!'),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: Navigator.of(context).pop,
+                              child: Text('CLOSE'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   );
                 },
               ),

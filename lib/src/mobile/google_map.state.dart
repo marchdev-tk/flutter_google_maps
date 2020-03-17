@@ -81,7 +81,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     String label,
     String icon,
     String info,
-    int zIndex,
+    VoidCallback onTap,
   }) async {
     assert(() {
       if (position == null) {
@@ -102,12 +102,13 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     final markerId = MarkerId(key);
     final marker = Marker(
       markerId: markerId,
+      onTap: onTap,
+      consumeTapEvents: onTap != null,
       position: position.toLatLng(),
       icon: icon == null
           ? BitmapDescriptor.defaultMarker
           : await _getBmpDescFromAsset('${fixAssetPath(icon)}$icon'),
       infoWindow: info != null ? InfoWindow(title: info) : null,
-      zIndex: zIndex?.toDouble(),
     );
 
     _setState(() => _markers[key] = marker);

@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.0]
+
+* Added onTap VoidCallback for addMarker method
+
 ## [3.1.0]
 
 * Added gesture boolean to WebMapPreferences, that indicates whether to enable gestures or not

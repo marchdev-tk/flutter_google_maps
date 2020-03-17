@@ -154,6 +154,7 @@ Here's list of interactions:
     String label,
     String icon,
     String info,
+    VoidCallback onTap,
   });
   ```
 * Remove marker from the map by given [position]
