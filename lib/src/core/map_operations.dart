@@ -35,6 +35,10 @@ abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
   /// Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
   /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
   /// style reference for more information regarding the supported styles.
+  /// 
+  /// Please note, if widget rebuilds new map style will be ommited due to map style
+  /// provided from the `widget`. So, if map will be scrolled out, make sure that
+  /// new map style will be set to widgets [GoogleMap.mapStyle].
   void changeMapStyle(String mapStyle);
 }
 

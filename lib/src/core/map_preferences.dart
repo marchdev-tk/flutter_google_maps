@@ -24,6 +24,7 @@ enum MapType {
 
 /// Set of mobile map preferences
 class MobileMapPreferences {
+  /// Creates an instance of [MobileMapPreferences].
   const MobileMapPreferences({
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
@@ -94,18 +95,49 @@ class MobileMapPreferences {
 
 /// Set of web map preferences
 class WebMapPreferences {
+  /// Creates an instance of [WebMapPreferences].
   const WebMapPreferences({
     this.streetViewControl = false,
     this.fullscreenControl = false,
     this.mapTypeControl = false,
-    this.scrollwheel = true,
     this.panControl = false,
     this.overviewMapControl = false,
     this.rotateControl = false,
     this.scaleControl = false,
     this.zoomControl = false,
-    this.gestures = true,
+    this.dragGestures = true,
+    this.scrollwheel = true,
   });
+
+  /// Predefined support for fullscreen map.
+  /// 
+  /// Scrollwheel zomming and dragging gestures are enabled. 
+  const WebMapPreferences.fullscreen({
+    this.streetViewControl = false,
+    this.fullscreenControl = false,
+    this.mapTypeControl = false,
+    this.panControl = false,
+    this.overviewMapControl = false,
+    this.rotateControl = false,
+    this.scaleControl = false,
+    this.zoomControl = false,
+  })  : dragGestures = true,
+        scrollwheel = true;
+
+  /// Predefined support for map that will be scrolled.
+  /// 
+  /// Scrollwheel zomming and dragging gestures are disabled. 
+  const WebMapPreferences.scrollable({
+    this.streetViewControl = false,
+    this.fullscreenControl = false,
+    this.mapTypeControl = false,
+    this.panControl = false,
+    this.overviewMapControl = false,
+    this.rotateControl = false,
+    this.scaleControl = false,
+    this.zoomControl = false,
+  })  : dragGestures = false,
+        scrollwheel = false;
 
   /// Enables or disables streetViewControl.
   final bool streetViewControl;
@@ -134,6 +166,6 @@ class WebMapPreferences {
   /// Enables or disables zoomControl.
   final bool zoomControl;
 
-  /// Enables or disables gestures.
-  final bool gestures;
+  /// Enables or disables flutter drag gestures.
+  final bool dragGestures;
 }

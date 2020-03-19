@@ -22,12 +22,14 @@ class GoogleMap extends StatefulWidget {
     this.minZoom,
     this.maxZoom,
     this.mapStyle,
+    this.interactive = true,
     this.initialZoom = _zoom,
     this.mapType = MapType.roadmap,
     this.initialPosition = const GeoCoord(_defaultLat, _defaultLng),
     this.mobilePreferences = const MobileMapPreferences(),
     this.webPreferences = const WebMapPreferences(),
   })  : assert(mapType != null),
+        assert(interactive != null),
         assert(initialPosition != null),
         assert(initialZoom != null),
         assert(mobilePreferences != null),
@@ -63,6 +65,9 @@ class GoogleMap extends StatefulWidget {
   /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
   /// style reference for more information regarding the supported styles.
   final String mapStyle;
+
+  /// Defines whether map is interactive or not. 
+  final bool interactive;
 
   /// Set of mobile map preferences.
   final MobileMapPreferences mobilePreferences;

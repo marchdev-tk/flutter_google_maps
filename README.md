@@ -130,6 +130,7 @@ And now you're ready to go.
 | mapStyle          | String               | Sets the styling of the base map                                  |
 | mobilePreferences | MobileMapPreferences | Set of mobile map preferences                                     |
 | webPreferences    | WebMapPreferences    | Set of web map preferences                                        |
+| interactive       | bool                 | Defines whether map is interactive or not                         |
 
 **`MapType` is one of following variants:**
 
@@ -154,18 +155,18 @@ And now you're ready to go.
 
 **`WebMapPreferences` can be configured with:**
 
-| Property           | Type | Description                            |
-| :----------------: | :--: | :------------------------------------: |
-| streetViewControl  | bool | Enables or disables streetViewControl  |
-| fullscreenControl  | bool | Enables or disables fullscreenControl  |
-| mapTypeControl     | bool | Enables or disables mapTypeControl     |
-| scrollwheel        | bool | Enables or disables scrollwheel        |
-| panControl         | bool | Enables or disables panControl         |
-| overviewMapControl | bool | Enables or disables overviewMapControl |
-| rotateControl      | bool | Enables or disables rotateControl      |
-| scaleControl       | bool | Enables or disables scaleControl       |
-| zoomControl        | bool | Enables or disables zoomControl        |
-| gestures           | bool | Enables or disables gestures           |
+| Property           | Type | Description                               |
+| :----------------: | :--: | :---------------------------------------: |
+| streetViewControl  | bool | Enables or disables streetViewControl     |
+| fullscreenControl  | bool | Enables or disables fullscreenControl     |
+| mapTypeControl     | bool | Enables or disables mapTypeControl        |
+| scrollwheel        | bool | Enables or disables scrollwheel           |
+| panControl         | bool | Enables or disables panControl            |
+| overviewMapControl | bool | Enables or disables overviewMapControl    |
+| rotateControl      | bool | Enables or disables rotateControl         |
+| scaleControl       | bool | Enables or disables scaleControl          |
+| zoomControl        | bool | Enables or disables zoomControl           |
+| dragGestures       | bool | Enables or disables flutter drag gestures |
 
 ### To prepare for interacting with GoogleMap you will need to:
 

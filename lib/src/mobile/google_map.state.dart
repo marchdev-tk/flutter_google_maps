@@ -44,7 +44,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
-  }) {
+  }) async {
     assert(() {
       if (newBounds == null) {
         throw ArgumentError.notNull('newBounds');
@@ -53,13 +53,15 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       return true;
     }());
 
+    while (_controller == null) {}
+
     if (animated == true) {
-      _controller.animateCamera(CameraUpdate.newLatLngBounds(
+      await _controller?.animateCamera(CameraUpdate.newLatLngBounds(
         newBounds.toLatLngBounds(),
         padding ?? 0,
       ));
     } else {
-      _controller.moveCamera(CameraUpdate.newLatLngBounds(
+      await _controller?.moveCamera(CameraUpdate.newLatLngBounds(
         newBounds.toLatLngBounds(),
         padding ?? 0,
       ));
@@ -372,32 +374,35 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => Container(
-          constraints: BoxConstraints(maxHeight: constraints.maxHeight),
-          child: GoogleMap(
-            mapType: MapType.values[widget.mapType.index],
-            minMaxZoomPreference:
-                MinMaxZoomPreference(widget.minZoom, widget.minZoom),
-            markers: Set<Marker>.of(_markers.values),
-            polygons: Set<Polygon>.of(_polygons.values),
-            polylines: Set<Polyline>.of(_polylines.values),
-            initialCameraPosition: CameraPosition(
-              target: widget.initialPosition.toLatLng(),
-              zoom: widget.initialZoom,
+        builder: (context, constraints) => IgnorePointer(
+          ignoring: !widget.interactive,
+          child: Container(
+            constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+            child: GoogleMap(
+              mapType: MapType.values[widget.mapType.index],
+              minMaxZoomPreference:
+                  MinMaxZoomPreference(widget.minZoom, widget.minZoom),
+              markers: Set<Marker>.of(_markers.values),
+              polygons: Set<Polygon>.of(_polygons.values),
+              polylines: Set<Polyline>.of(_polylines.values),
+              initialCameraPosition: CameraPosition(
+                target: widget.initialPosition.toLatLng(),
+                zoom: widget.initialZoom,
+              ),
+              onMapCreated: (GoogleMapController controller) {
+                _controller = controller;
+                _controller.setMapStyle(widget.mapStyle);
+              },
+              padding: widget.mobilePreferences.padding,
+              compassEnabled: widget.mobilePreferences.compassEnabled,
+              trafficEnabled: widget.mobilePreferences.trafficEnabled,
+              buildingsEnabled: widget.mobilePreferences.buildingsEnabled,
+              indoorViewEnabled: widget.mobilePreferences.indoorViewEnabled,
+              mapToolbarEnabled: widget.mobilePreferences.mapToolbarEnabled,
+              myLocationEnabled: widget.mobilePreferences.myLocationEnabled,
+              myLocationButtonEnabled:
+                  widget.mobilePreferences.myLocationButtonEnabled,
             ),
-            onMapCreated: (GoogleMapController controller) {
-              _controller = controller;
-              _controller.setMapStyle(widget.mapStyle);
-            },
-            padding: widget.mobilePreferences.padding,
-            compassEnabled: widget.mobilePreferences.compassEnabled,
-            trafficEnabled: widget.mobilePreferences.trafficEnabled,
-            buildingsEnabled: widget.mobilePreferences.buildingsEnabled,
-            indoorViewEnabled: widget.mobilePreferences.indoorViewEnabled,
-            mapToolbarEnabled: widget.mobilePreferences.mapToolbarEnabled,
-            myLocationEnabled: widget.mobilePreferences.myLocationEnabled,
-            myLocationButtonEnabled:
-                widget.mobilePreferences.myLocationButtonEnabled,
           ),
         ),
       );

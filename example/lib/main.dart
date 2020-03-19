@@ -34,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _key = GlobalKey<GoogleMapStateBase>();
   bool _polygonAdded = false;
   bool _darkMapStyle = false;
+  String _mapStyle;
 
   List<Widget> _buildClearButtons() => [
         RaisedButton.icon(
@@ -135,11 +136,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 initialPosition:
                     GeoCoord(34.0469058, -118.3503948), // Los Angeles, CA
                 mapType: MapType.roadmap,
+                mapStyle: _mapStyle,
+                interactive: true,
                 mobilePreferences: const MobileMapPreferences(
                   trafficEnabled: true,
                 ),
                 webPreferences: WebMapPreferences(
                   fullscreenControl: true,
+                  zoomControl: true,
                 ),
               ),
             ),
@@ -188,8 +192,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   if (_darkMapStyle) {
                     GoogleMap.of(_key).changeMapStyle(null);
+                    _mapStyle = null;
                   } else {
-                    GoogleMap.of(_key).changeMapStyle(dartMapStyle);
+                    GoogleMap.of(_key).changeMapStyle(darkMapStyle);
+                    _mapStyle = darkMapStyle;
                   }
 
                   setState(() => _darkMapStyle = !_darkMapStyle);
@@ -226,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 }
 
-const dartMapStyle = r'''
+const darkMapStyle = r'''
 [
   {
     "elementType": "geometry",

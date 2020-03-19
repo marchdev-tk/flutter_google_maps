@@ -72,6 +72,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String icon,
     String info,
     ui.VoidCallback onTap,
+    ui.VoidCallback onInfoWindowTap,
   }) {
     assert(() {
       if (position == null) {
@@ -105,7 +106,9 @@ class GoogleMapState extends GoogleMapStateBase {
             final key = position.toString();
 
             if (_infos[key] == null) {
-              _infos[key] = InfoWindow(InfoWindowOptions()..content = info);
+              final _info = onInfoWindowTap == null ? info : '<p onclick="">$info</p>';
+
+              _infos[key] = InfoWindow(InfoWindowOptions()..content = _info);
               // potential leak
               _infos[key].onCloseclick.listen((_) => _infoState[key] = false);
             }
@@ -405,8 +408,7 @@ class GoogleMapState extends GoogleMapStateBase {
     _polygons.clear();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  void _createMapOptions() {
     _mapOptions = MapOptions()
       ..zoom = widget.initialZoom
       ..center = widget.initialPosition.toLatLng()
@@ -422,27 +424,35 @@ class GoogleMapState extends GoogleMapStateBase {
       ..minZoom = widget.minZoom
       ..maxZoom = widget.maxZoom
       ..styles = widget.mapStyle?.parseMapStyle()
-      ..mapTypeId = widget.mapType.toString().split('.')[1];
+      ..mapTypeId = widget.mapType.toString().split('.')[1]
+      ..gestureHandling = widget.interactive ? 'auto' : 'none';
+  }
 
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(htmlId, (int viewId) {
-      final elem = DivElement()
-        ..id = htmlId
-        ..style.width = '100%'
-        ..style.height = '100%'
-        ..style.border = 'none';
+  @override
+  Widget build(BuildContext context) {
+    _createMapOptions();
 
-      _map = GMap(elem, _mapOptions);
+    if (_map == null) {
+      // ignore: undefined_prefixed_name
+      ui.platformViewRegistry.registerViewFactory(htmlId, (int viewId) {
+        final elem = DivElement()
+          ..id = htmlId
+          ..style.width = '100%'
+          ..style.height = '100%'
+          ..style.border = 'none';
 
-      return elem;
-    });
+        _map = GMap(elem, _mapOptions);
+
+        return elem;
+      });
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) => GestureDetector(
-        onPanUpdate: widget.webPreferences.gestures ? null : (_) {},
-        onScaleUpdate: widget.webPreferences.gestures ? null : (_) {},
-        onVerticalDragUpdate: widget.webPreferences.gestures ? null : (_) {},
-        onHorizontalDragUpdate: widget.webPreferences.gestures ? null : (_) {},
+        onVerticalDragUpdate:
+            widget.webPreferences.dragGestures ? null : (_) {},
+        onHorizontalDragUpdate:
+            widget.webPreferences.dragGestures ? null : (_) {},
         child: Container(
           constraints: BoxConstraints(maxHeight: constraints.maxHeight),
           child: HtmlElementView(viewType: htmlId),
