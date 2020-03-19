@@ -56,6 +56,8 @@ abstract class MapMarkers {
   ///  * For `mobile` [info] could be only a [String]
   ///
   /// If [onTap] is not null, [info] popup will not be shown.
+  /// 
+  /// if [onInfoWindowTap] is set, it will be called once InfoWindow will be tapped.
   ///
   /// If marker with same [position] have been already added, addition of a new marker will be ignored.
   void addMarker(
@@ -64,6 +66,7 @@ abstract class MapMarkers {
     String icon,
     String info,
     VoidCallback onTap,
+    VoidCallback onInfoWindowTap,
   });
 
   /// Removes a marker from the map by given [position].

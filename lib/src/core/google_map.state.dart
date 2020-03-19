@@ -41,6 +41,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String icon,
     String info,
     VoidCallback onTap,
+    VoidCallback onInfoWindowTap,
   }) =>
       throw UnimplementedError();
 

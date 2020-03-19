@@ -104,9 +104,14 @@ class GoogleMapState extends GoogleMapStateBase {
             }
 
             final key = position.toString();
+            int doubleToInt(double value) => (value * 100000).truncate();
+            final id =
+                'position${doubleToInt(position.latitude)}${doubleToInt(position.longitude)}';
 
             if (_infos[key] == null) {
-              final _info = onInfoWindowTap == null ? info : '<p onclick="">$info</p>';
+              print(id);
+              final _info =
+                  onInfoWindowTap == null ? info : '<p id="$id">$info</p>';
 
               _infos[key] = InfoWindow(InfoWindowOptions()..content = _info);
               // potential leak
@@ -115,6 +120,14 @@ class GoogleMapState extends GoogleMapStateBase {
 
             if (!(_infoState[key] ?? false)) {
               _infos[key].open(_map, marker);
+              if (_infoState[key] == null) {
+                final infoElem = querySelector('#$id');
+                // TODO finish
+                infoElem.addEventListener(
+                    'onclick', (event) => onInfoWindowTap());
+                infoElem.addEventListener(
+                    'touchstart', (event) => onInfoWindowTap());
+              }
               _infoState[key] = true;
             } else {
               _infos[key].close();

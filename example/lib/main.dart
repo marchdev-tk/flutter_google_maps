@@ -98,6 +98,21 @@ class _MyHomePageState extends State<MyHomePage> {
             GoogleMap.of(_key).addMarker(
               GeoCoord(33.875513, -117.550257),
               info: 'test info',
+              onInfoWindowTap: () async {
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    content: Text(
+                        'This dialog was opened by tapping on the InfoWindow!'),
+                    actions: <Widget>[
+                      FlatButton(
+                        onPressed: Navigator.of(context).pop,
+                        child: Text('CLOSE'),
+                      ),
+                    ],
+                  ),
+                );
+              },
             );
             GoogleMap.of(_key).addMarker(
               GeoCoord(33.775513, -117.450257),
