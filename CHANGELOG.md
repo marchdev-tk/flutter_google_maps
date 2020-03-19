@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.3.0]
+
+* Added onInfoWindowTap for addMarker method (works only on Android/iOS)
+* Added map iteractivity setup
+
 ## [3.2.0]
 
 * Added onTap VoidCallback for addMarker method

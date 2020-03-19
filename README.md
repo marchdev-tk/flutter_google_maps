@@ -218,6 +218,7 @@ Here's list of interactions:
     String icon,
     String info,
     VoidCallback onTap,
+    VOidCallback onInfoWindowTap,
   });
   ```
 * Remove marker from the map by given [position]
