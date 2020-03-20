@@ -88,60 +88,60 @@ class GoogleMapState extends GoogleMapStateBase {
       return true;
     }());
 
-    _markers.putIfAbsent(
-      position.toString(),
-      () {
-        final marker = Marker()
-          ..map = _map
-          ..label = label
-          ..icon = icon != null ? '${fixAssetPath(icon)}assets/$icon' : null
-          ..position = position.toLatLng();
+    final key = position.toString();
 
-        if (info != null || onTap != null) {
-          _subscriptions.add(marker.onClick.listen((_) {
-            if (onTap != null) {
-              onTap();
-              return;
-            }
+    if (_markers.containsKey(key)) return;
 
-            final key = position.toString();
-            int doubleToInt(double value) => (value * 100000).truncate();
-            final id =
-                'position${doubleToInt(position.latitude)}${doubleToInt(position.longitude)}';
+    final marker = Marker()
+      ..map = _map
+      ..label = label
+      ..icon = icon != null ? '${fixAssetPath(icon)}assets/$icon' : null
+      ..position = position.toLatLng();
 
-            if (_infos[key] == null) {
-              print(id);
-              final _info =
-                  onInfoWindowTap == null ? info : '<p id="$id">$info</p>';
-
-              _infos[key] = InfoWindow(InfoWindowOptions()..content = _info);
-              _subscriptions.add(_infos[key]
-                  .onCloseclick
-                  .listen((_) => _infoState[key] = false));
-            }
-
-            if (!(_infoState[key] ?? false)) {
-              _infos[key].open(_map, marker);
-              if (_infoState[key] == null) {
-                final infoElem = querySelector('#$id');
-                // TODO finish
-                infoElem.addEventListener(
-                    'onclick', (event) => onInfoWindowTap());
-                infoElem.addEventListener(
-                    'touchstart', (event) => onInfoWindowTap());
-              }
-              _infoState[key] = true;
-            } else {
-              _infos[key].close();
-
-              _infoState[key] = false;
-            }
-          }));
+    if (info != null || onTap != null) {
+      _subscriptions.add(marker.onClick.listen((_) async {
+        if (onTap != null) {
+          onTap();
+          return;
         }
 
-        return marker;
-      },
-    );
+        final key = position.toString();
+        int doubleToInt(double value) => (value * 100000).truncate();
+        final id =
+            'position${doubleToInt(position.latitude)}${doubleToInt(position.longitude)}';
+
+        if (_infos[key] == null) {
+          print(id);
+          final _info =
+              onInfoWindowTap == null ? info : '<p id="$id">$info</p>';
+
+          _infos[key] = InfoWindow(InfoWindowOptions()..content = _info);
+          _subscriptions.add(
+              _infos[key].onCloseclick.listen((_) => _infoState[key] = false));
+        }
+
+        if (!(_infoState[key] ?? false)) {
+          _infos[key].open(_map, marker);
+          if (_infoState[key] == null) {
+            await Future.delayed(const Duration(milliseconds: 100));
+
+            final infoElem = querySelector('flt-platform-view')
+                .shadowRoot
+                .getElementById('$htmlId')
+                .querySelector('#$id');
+
+            infoElem.addEventListener('click', (event) => onInfoWindowTap());
+          }
+          _infoState[key] = true;
+        } else {
+          _infos[key].close();
+
+          _infoState[key] = false;
+        }
+      }));
+    }
+
+    _markers[key] = marker;
   }
 
   @override

@@ -4,6 +4,7 @@
 
 * Added rotate/scroll/tilt/zoom gestures to mobile map preferences
 * Added map callbacks onTap, onLongPress
+* Added onInfoWindowTap for addMarker method on web
 
 ## [3.3.0]
 
