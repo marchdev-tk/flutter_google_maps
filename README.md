@@ -120,17 +120,19 @@ And now you're ready to go.
 
 ### GoogleMap widget can be configured with:
 
-| Property          | Type                 | Description                                                       |
-| :---------------: | :------------------: | :---------------------------------------------------------------: |
-| initialPosition   | GeoCoord             | The initial position of the map's camera                          |
-| initialZoom       | double               | The initial zoom of the map's camera                              |
-| mapType           | MapType              | Type of map tiles to be rendered                                  |
-| minZoom           | double               | The preferred minimum zoom level or null, if unbounded from below |
-| maxZoom           | double               | The preferred maximum zoom level or null, if unbounded from above |
-| mapStyle          | String               | Sets the styling of the base map                                  |
-| mobilePreferences | MobileMapPreferences | Set of mobile map preferences                                     |
-| webPreferences    | WebMapPreferences    | Set of web map preferences                                        |
-| interactive       | bool                 | Defines whether map is interactive or not                         |
+| Property          | Type                   | Description                                                                      |
+| :---------------: | :--------------------: | :------------------------------------------------------------------------------: |
+| initialPosition   | GeoCoord               | The initial position of the map's camera                                         |
+| initialZoom       | double                 | The initial zoom of the map's camera                                             |
+| mapType           | MapType                | Type of map tiles to be rendered                                                 |
+| minZoom           | double                 | The preferred minimum zoom level or null, if unbounded from below                |
+| maxZoom           | double                 | The preferred maximum zoom level or null, if unbounded from above                |
+| mapStyle          | String                 | Sets the styling of the base map                                                 |
+| mobilePreferences | MobileMapPreferences   | Set of mobile map preferences                                                    |
+| webPreferences    | WebMapPreferences      | Set of web map preferences                                                       |
+| interactive       | bool                   | Defines whether map is interactive or not                                        |
+| onTap             | ValueChanged<GeoCoord> | Called every time a GoogleMap is tapped                                          |
+| onLongPress       | ValueChanged<GeoCoord> | Called every time a GoogleMap is long pressed (for web when right mouse clicked) |
 
 **`MapType` is one of following variants:**
 
@@ -152,6 +154,10 @@ And now you're ready to go.
 | trafficEnabled           | bool       | Enables or disables the traffic layer of the map                                   |
 | buildingsEnabled         | bool       | Enables or disables showing 3D buildings where available                           |
 | padding                  | EdgeInsets | Padding to be set on mapdetails                                                    |
+| rotateGesturesEnabled    | bool       | True if the map view should respond to rotate gestures                             |
+| scrollGesturesEnabled    | bool       | True if the map view should respond to scroll gestures                             |
+| zoomGesturesEnabled      | bool       | True if the map view should respond to zoom gestures                               |
+| tiltGesturesEnabled      | bool       | True if the map view should respond to tilt gestures                               |
 
 **`WebMapPreferences` can be configured with:**
 

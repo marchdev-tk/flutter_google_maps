@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.4.0]
+
+* Added rotate/scroll/tilt/zoom gestures to mobile map preferences
+* Added map callbacks onTap, onLongPress
+
 ## [3.3.0]
 
 * Added onInfoWindowTap for addMarker method (works only on Android/iOS)

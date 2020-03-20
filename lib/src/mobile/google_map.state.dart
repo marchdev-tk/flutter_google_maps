@@ -385,16 +385,18 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           child: Container(
             constraints: BoxConstraints(maxHeight: constraints.maxHeight),
             child: GoogleMap(
-              mapType: MapType.values[widget.mapType.index],
-              minMaxZoomPreference:
-                  MinMaxZoomPreference(widget.minZoom, widget.minZoom),
               markers: Set<Marker>.of(_markers.values),
               polygons: Set<Polygon>.of(_polygons.values),
               polylines: Set<Polyline>.of(_polylines.values),
+              mapType: MapType.values[widget.mapType.index],
+              minMaxZoomPreference:
+                  MinMaxZoomPreference(widget.minZoom, widget.minZoom),
               initialCameraPosition: CameraPosition(
                 target: widget.initialPosition.toLatLng(),
                 zoom: widget.initialZoom,
               ),
+              onTap: (coords) => widget.onTap(coords?.toGeoCoord()),
+              onLongPress: (coords) => widget.onTap(coords?.toGeoCoord()),
               onMapCreated: (GoogleMapController controller) {
                 _controller = controller;
                 _controller.setMapStyle(widget.mapStyle);
@@ -408,8 +410,26 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               myLocationEnabled: widget.mobilePreferences.myLocationEnabled,
               myLocationButtonEnabled:
                   widget.mobilePreferences.myLocationButtonEnabled,
+              tiltGesturesEnabled: widget.mobilePreferences.tiltGesturesEnabled,
+              zoomGesturesEnabled: widget.mobilePreferences.zoomGesturesEnabled,
+              rotateGesturesEnabled:
+                  widget.mobilePreferences.rotateGesturesEnabled,
+              scrollGesturesEnabled:
+                  widget.mobilePreferences.scrollGesturesEnabled,
             ),
           ),
         ),
       );
+
+  @override
+  void dispose() {
+    super.dispose();
+    
+    _markers.clear();
+    _polygons.clear();
+    _polylines.clear();
+    _directionMarkerCoords.clear();
+
+    _controller = null;
+  }
 }

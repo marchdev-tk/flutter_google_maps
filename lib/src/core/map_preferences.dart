@@ -26,6 +26,10 @@ enum MapType {
 class MobileMapPreferences {
   /// Creates an instance of [MobileMapPreferences].
   const MobileMapPreferences({
+    this.rotateGesturesEnabled = true,
+    this.scrollGesturesEnabled = true,
+    this.zoomGesturesEnabled = true,
+    this.tiltGesturesEnabled = true,
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
     this.myLocationEnabled = false,
@@ -91,6 +95,18 @@ class MobileMapPreferences {
 
   /// Padding to be set on map. See https://developers.google.com/maps/documentation/android-sdk/map#map_padding for more details.
   final EdgeInsets padding;
+
+  /// True if the map view should respond to rotate gestures.
+  final bool rotateGesturesEnabled;
+
+  /// True if the map view should respond to scroll gestures.
+  final bool scrollGesturesEnabled;
+
+  /// True if the map view should respond to zoom gestures.
+  final bool zoomGesturesEnabled;
+
+  /// True if the map view should respond to tilt gestures.
+  final bool tiltGesturesEnabled;
 }
 
 /// Set of web map preferences
@@ -110,8 +126,8 @@ class WebMapPreferences {
   });
 
   /// Predefined support for fullscreen map.
-  /// 
-  /// Scrollwheel zomming and dragging gestures are enabled. 
+  ///
+  /// Scrollwheel zomming and dragging gestures are enabled.
   const WebMapPreferences.fullscreen({
     this.streetViewControl = false,
     this.fullscreenControl = false,
@@ -125,8 +141,8 @@ class WebMapPreferences {
         scrollwheel = true;
 
   /// Predefined support for map that will be scrolled.
-  /// 
-  /// Scrollwheel zomming and dragging gestures are disabled. 
+  ///
+  /// Scrollwheel zomming and dragging gestures are disabled.
   const WebMapPreferences.scrollable({
     this.streetViewControl = false,
     this.fullscreenControl = false,

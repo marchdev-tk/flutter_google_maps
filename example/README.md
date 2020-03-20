@@ -34,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _key = GlobalKey<GoogleMapStateBase>();
   bool _polygonAdded = false;
   bool _darkMapStyle = false;
@@ -142,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text('Google Map'),
         ),
@@ -156,6 +158,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 mapType: MapType.roadmap,
                 mapStyle: _mapStyle,
                 interactive: true,
+                onTap: (coord) =>
+                    _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Text(coord?.toString()),
+                  duration: const Duration(seconds: 2),
+                )),
                 mobilePreferences: const MobileMapPreferences(
                   trafficEnabled: true,
                 ),

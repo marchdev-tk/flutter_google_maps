@@ -22,6 +22,8 @@ class GoogleMap extends StatefulWidget {
     this.minZoom,
     this.maxZoom,
     this.mapStyle,
+    this.onTap,
+    this.onLongPress,
     this.interactive = true,
     this.initialZoom = _zoom,
     this.mapType = MapType.roadmap,
@@ -66,8 +68,16 @@ class GoogleMap extends StatefulWidget {
   /// style reference for more information regarding the supported styles.
   final String mapStyle;
 
-  /// Defines whether map is interactive or not. 
+  /// Defines whether map is interactive or not.
   final bool interactive;
+
+  /// Called every time a [GoogleMap] is tapped.
+  final ValueChanged<GeoCoord> onTap;
+
+  /// Called every time a [GoogleMap] is long pressed.
+  /// 
+  /// For `web` this will be called when `right mouse clicked`.
+  final ValueChanged<GeoCoord> onLongPress;
 
   /// Set of mobile map preferences.
   final MobileMapPreferences mobilePreferences;

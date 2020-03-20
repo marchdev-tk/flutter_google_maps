@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:html';
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
@@ -25,6 +26,7 @@ class GoogleMapState extends GoogleMapStateBase {
   final _infoState = <String, bool>{};
   final _infos = <String, InfoWindow>{};
   final _polygons = <String, Polygon>{};
+  final _subscriptions = <StreamSubscription>[];
   final _directions = <String, DirectionsRenderer>{};
 
   GMap _map;
@@ -96,8 +98,7 @@ class GoogleMapState extends GoogleMapStateBase {
           ..position = position.toLatLng();
 
         if (info != null || onTap != null) {
-          // potential leak
-          marker.onClick.listen((_) {
+          _subscriptions.add(marker.onClick.listen((_) {
             if (onTap != null) {
               onTap();
               return;
@@ -114,8 +115,9 @@ class GoogleMapState extends GoogleMapStateBase {
                   onInfoWindowTap == null ? info : '<p id="$id">$info</p>';
 
               _infos[key] = InfoWindow(InfoWindowOptions()..content = _info);
-              // potential leak
-              _infos[key].onCloseclick.listen((_) => _infoState[key] = false);
+              _subscriptions.add(_infos[key]
+                  .onCloseclick
+                  .listen((_) => _infoState[key] = false));
             }
 
             if (!(_infoState[key] ?? false)) {
@@ -134,7 +136,7 @@ class GoogleMapState extends GoogleMapStateBase {
 
               _infoState[key] = false;
             }
-          });
+          }));
         }
 
         return marker;
@@ -456,6 +458,11 @@ class GoogleMapState extends GoogleMapStateBase {
 
         _map = GMap(elem, _mapOptions);
 
+        _subscriptions.add(_map.onClick
+            .listen((event) => widget.onTap(event?.latLng?.toGeoCoord())));
+        _subscriptions.add(_map.onRightclick.listen(
+            (event) => widget.onLongPress(event?.latLng?.toGeoCoord())));
+
         return elem;
       });
     }
@@ -472,5 +479,21 @@ class GoogleMapState extends GoogleMapStateBase {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _subscriptions.forEach((_) => _.cancel());
+
+    _infos.clear();
+    _markers.clear();
+    _polygons.clear();
+    _infoState.clear();
+    _directions.clear();
+    _subscriptions.clear();
+
+    _map = null;
+    _mapOptions = null;
   }
 }
