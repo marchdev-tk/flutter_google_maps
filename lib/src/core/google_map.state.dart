@@ -15,11 +15,16 @@ class GoogleMapState extends GoogleMapStateBase {
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
+    bool waitUntilReady = true,
   }) =>
       throw UnimplementedError();
 
   @override
-  void changeMapStyle(String mapStyle) => throw UnimplementedError();
+  void changeMapStyle(
+    String mapStyle, {
+    bool waitUntilReady = true,
+  }) =>
+      throw UnimplementedError();
 
   @override
   void addDirection(

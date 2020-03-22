@@ -16,15 +16,30 @@ import 'package:google_directions_api/google_directions_api.dart'
 ///  * Map Style
 abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
   /// Moves camera to the new bounds.
+  /// 
+  /// If `padding` not set, it defaults to `0`.
+  /// 
+  /// if `animated` not set, it defaults to `true`.
+  /// 
+  /// For safe execution of [moveCamera] some actions must be performed, and if
+  /// `waitUntilReady` is set to `true` (by default it's true), so this method
+  /// will await of completion of all actions, and executes [moveCamera] as soon
+  /// as it possible. This argument only affects on **mobile** devices.
   void moveCamera(
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
+    bool waitUntilReady = true,
   });
 
   /// Sets the styling of the base map.
   ///
   /// Set to `null` to clear any previous custom styling.
+  /// 
+  /// For safe execution of [changeMapStyle] some actions must be performed, and if
+  /// `waitUntilReady` is set to `true` (by default it's true), so this method
+  /// will await of completion of all actions, and executes [changeMapStyle] as soon
+  /// as it possible. This argument only affects on **mobile** devices.
   ///
   /// If problems were detected with the [mapStyle], including un-parsable
   /// styling JSON, unrecognized feature type, unrecognized element type, or
@@ -35,11 +50,14 @@ abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
   /// Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
   /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
   /// style reference for more information regarding the supported styles.
-  /// 
+  ///
   /// Please note, if widget rebuilds new map style will be ommited due to map style
   /// provided from the `widget`. So, if map will be scrolled out, make sure that
   /// new map style will be set to widgets [GoogleMap.mapStyle].
-  void changeMapStyle(String mapStyle);
+  void changeMapStyle(
+    String mapStyle, {
+    bool waitUntilReady = true,
+  });
 }
 
 /// Interface of setting up markers
@@ -56,7 +74,7 @@ abstract class MapMarkers {
   ///  * For `mobile` [info] could be only a [String]
   ///
   /// If [onTap] is not null, [info] popup will not be shown.
-  /// 
+  ///
   /// if [onInfoWindowTap] is set, it will be called once InfoWindow will be tapped.
   ///
   /// If marker with same [position] have been already added, addition of a new marker will be ignored.

@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import 'package:flinq/flinq.dart';
@@ -19,6 +21,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   final _polygons = <String, Polygon>{};
   final _polylines = <String, Polyline>{};
   final _directionMarkerCoords = <GeoCoord, dynamic>{};
+
+  final _waitUntilReadyCompleter = Completer<Null>();
 
   GoogleMapController _controller;
 
@@ -44,6 +48,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
+    bool waitUntilReady = true,
   }) async {
     assert(() {
       if (newBounds == null) {
@@ -53,7 +58,9 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       return true;
     }());
 
-    while (_controller == null) {}
+    if (waitUntilReady == true) {
+      await _waitUntilReadyCompleter.future;
+    }
 
     if (animated == true) {
       await _controller?.animateCamera(CameraUpdate.newLatLngBounds(
@@ -69,9 +76,15 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   }
 
   @override
-  void changeMapStyle(String mapStyle) {
+  void changeMapStyle(
+    String mapStyle, {
+    bool waitUntilReady = true,
+  }) async {
+    if (waitUntilReady == true) {
+      await _waitUntilReadyCompleter.future;
+    }
     try {
-      _controller.setMapStyle(mapStyle);
+      await _controller?.setMapStyle(mapStyle);
     } on MapStyleException catch (e) {
       throw exception.MapStyleException(e.cause);
     }
@@ -400,6 +413,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               onMapCreated: (GoogleMapController controller) {
                 _controller = controller;
                 _controller.setMapStyle(widget.mapStyle);
+
+                _waitUntilReadyCompleter.complete();
               },
               padding: widget.mobilePreferences.padding,
               compassEnabled: widget.mobilePreferences.compassEnabled,
@@ -424,7 +439,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   @override
   void dispose() {
     super.dispose();
-    
+
     _markers.clear();
     _polygons.clear();
     _polylines.clear();

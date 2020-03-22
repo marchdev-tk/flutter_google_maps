@@ -37,6 +37,7 @@ class GoogleMapState extends GoogleMapStateBase {
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
+    bool waitUntilReady = true,
   }) {
     assert(() {
       if (newBounds == null) {
@@ -58,7 +59,10 @@ class GoogleMapState extends GoogleMapStateBase {
   }
 
   @override
-  void changeMapStyle(String mapStyle) {
+  void changeMapStyle(
+    String mapStyle, {
+    bool waitUntilReady = true,
+  }) {
     try {
       _mapOptions.styles = mapStyle?.parseMapStyle();
       _map.options = _mapOptions;
