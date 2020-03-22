@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.5.0]
+
+* Fixed animateCamera issue and possible changeMapStyle issue
+
 ## [3.4.0]
 
 * Added rotate/scroll/tilt/zoom gestures to mobile map preferences
