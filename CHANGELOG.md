@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.6.0]
+
+* Added infoSnippet as an argument to addMarker method
+
 ## [3.5.0]
 
 * Fixed animateCamera issue and possible changeMapStyle issue
