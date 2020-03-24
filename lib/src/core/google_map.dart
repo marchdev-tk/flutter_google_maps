@@ -75,7 +75,7 @@ class GoogleMap extends StatefulWidget {
   final ValueChanged<GeoCoord> onTap;
 
   /// Called every time a [GoogleMap] is long pressed.
-  /// 
+  ///
   /// For `web` this will be called when `right mouse clicked`.
   final ValueChanged<GeoCoord> onLongPress;
 

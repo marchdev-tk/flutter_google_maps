@@ -16,11 +16,11 @@ import 'package:google_directions_api/google_directions_api.dart'
 ///  * Map Style
 abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
   /// Moves camera to the new bounds.
-  /// 
+  ///
   /// If `padding` not set, it defaults to `0`.
-  /// 
+  ///
   /// if `animated` not set, it defaults to `true`.
-  /// 
+  ///
   /// For safe execution of [moveCamera] some actions must be performed, and if
   /// `waitUntilReady` is set to `true` (by default it's true), so this method
   /// will await of completion of all actions, and executes [moveCamera] as soon
@@ -35,7 +35,7 @@ abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
   /// Sets the styling of the base map.
   ///
   /// Set to `null` to clear any previous custom styling.
-  /// 
+  ///
   /// For safe execution of [changeMapStyle] some actions must be performed, and if
   /// `waitUntilReady` is set to `true` (by default it's true), so this method
   /// will await of completion of all actions, and executes [changeMapStyle] as soon
