@@ -73,6 +73,8 @@ abstract class MapMarkers {
   ///  * For `web` [info] could be a [String] or `HTML String`
   ///  * For `mobile` [info] could be only a [String]
   ///
+  /// [infoSnippet] sets snippet text for `InfoWindow`.
+  ///
   /// If [onTap] is not null, [info] popup will not be shown.
   ///
   /// if [onInfoWindowTap] is set, it will be called once InfoWindow will be tapped.
@@ -83,6 +85,7 @@ abstract class MapMarkers {
     String label,
     String icon,
     String info,
+    String infoSnippet,
     VoidCallback onTap,
     VoidCallback onInfoWindowTap,
   });

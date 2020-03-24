@@ -96,6 +96,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     String label,
     String icon,
     String info,
+    String infoSnippet,
     VoidCallback onTap,
     VoidCallback onInfoWindowTap,
   }) async {
@@ -127,6 +128,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       infoWindow: info != null
           ? InfoWindow(
               title: info,
+              snippet: infoSnippet,
               onTap: onInfoWindowTap,
             )
           : null,

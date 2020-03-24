@@ -77,6 +77,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String label,
     String icon,
     String info,
+    String infoSnippet,
     ui.VoidCallback onTap,
     ui.VoidCallback onInfoWindowTap,
   }) {
@@ -116,8 +117,9 @@ class GoogleMapState extends GoogleMapStateBase {
 
         if (_infos[key] == null) {
           print(id);
-          final _info =
-              onInfoWindowTap == null ? info : '<p id="$id">$info</p>';
+          final _info = onInfoWindowTap == null
+              ? '$info${infoSnippet.isNotEmpty == true ? '\n$infoSnippet' : ''}'
+              : '<p id="$id">$info${infoSnippet.isNotEmpty == true ? '<p>$infoSnippet</p>' : ''}</p>';
 
           _infos[key] = InfoWindow(InfoWindowOptions()..content = _info);
           _subscriptions.add(

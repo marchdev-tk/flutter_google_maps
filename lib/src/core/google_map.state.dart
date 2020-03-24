@@ -45,6 +45,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String label,
     String icon,
     String info,
+    String infoSnippet,
     VoidCallback onTap,
     VoidCallback onInfoWindowTap,
   }) =>
