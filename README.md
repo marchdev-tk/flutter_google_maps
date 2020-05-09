@@ -223,7 +223,7 @@ Here's list of interactions:
     String label,
     String icon,
     String info,
-    VoidCallback onTap,
+    ValueChanged<String> onTap,
     VOidCallback onInfoWindowTap,
   });
   ```
@@ -264,6 +264,7 @@ Here's list of interactions:
   void addPolygon(
     String id,
     Iterable<GeoCoord> points, {
+    ValueChanged<String> onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -277,6 +278,7 @@ Here's list of interactions:
   void editPolygon(
     String id,
     Iterable<GeoCoord> points, {
+    ValueChanged<String> onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,

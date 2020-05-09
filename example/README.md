@@ -82,6 +82,23 @@ class _MyHomePageState extends State<MyHomePage> {
               GoogleMap.of(_key).addPolygon(
                 '1',
                 polygon,
+                onTap: (polygonId) async {
+                  await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: Text(
+                        'This dialog was opened by tapping on the polygon!\n'
+                        'Polygon ID is $polygonId',
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          onPressed: Navigator.of(context).pop,
+                          child: Text('CLOSE'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               );
             } else {
               GoogleMap.of(_key).editPolygon(
@@ -191,12 +208,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               bounds.southwest.longitude) /
                           2,
                     ),
-                    onTap: () async {
+                    onTap: (markerId) async {
                       await showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           content: Text(
-                              'This dialog was opened by tapping on the marker!'),
+                            'This dialog was opened by tapping on the marker!\n'
+                            'Marker ID is $markerId',
+                          ),
                           actions: <Widget>[
                             FlatButton(
                               onPressed: Navigator.of(context).pop,

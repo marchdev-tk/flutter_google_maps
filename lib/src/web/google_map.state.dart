@@ -78,7 +78,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String icon,
     String info,
     String infoSnippet,
-    ui.VoidCallback onTap,
+    ValueChanged<String> onTap,
     ui.VoidCallback onInfoWindowTap,
   }) {
     assert(() {
@@ -105,12 +105,13 @@ class GoogleMapState extends GoogleMapStateBase {
 
     if (info != null || onTap != null) {
       _subscriptions.add(marker.onClick.listen((_) async {
+        final key = position.toString();
+
         if (onTap != null) {
-          onTap();
+          onTap(key);
           return;
         }
 
-        final key = position.toString();
         int doubleToInt(double value) => (value * 100000).truncate();
         final id =
             'position${doubleToInt(position.latitude)}${doubleToInt(position.longitude)}';
@@ -341,6 +342,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void addPolygon(
     String id,
     Iterable<GeoCoord> points, {
+    ValueChanged<String> onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -371,6 +373,7 @@ class GoogleMapState extends GoogleMapStateBase {
       id,
       () {
         final options = PolygonOptions()
+          ..clickable = onTap != null
           ..paths = points.mapList((_) => _.toLatLng())
           ..strokeColor = strokeColor?.toHashString() ?? '#000000'
           ..strokeOpacity = strokeOpacity ?? 0.8
@@ -378,7 +381,13 @@ class GoogleMapState extends GoogleMapStateBase {
           ..fillColor = strokeColor?.toHashString() ?? '#000000'
           ..fillOpacity = fillOpacity ?? 0.35;
 
-        return Polygon(options)..map = _map;
+        final polygon = Polygon(options)..map = _map;
+
+        if (onTap != null) {
+          _subscriptions.add(polygon.onClick.listen((_) => onTap(id)));
+        }
+
+        return polygon;
       },
     );
   }
@@ -387,6 +396,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void editPolygon(
     String id,
     Iterable<GeoCoord> points, {
+    ValueChanged<String> onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,
@@ -397,6 +407,7 @@ class GoogleMapState extends GoogleMapStateBase {
     addPolygon(
       id,
       points,
+      onTap: onTap,
       strokeColor: strokeColor,
       strokeOpacity: strokeOpacity,
       strokeWidth: strokeWeight,

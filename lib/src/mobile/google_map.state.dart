@@ -97,7 +97,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     String icon,
     String info,
     String infoSnippet,
-    VoidCallback onTap,
+    ValueChanged<String> onTap,
     VoidCallback onInfoWindowTap,
   }) async {
     assert(() {
@@ -119,7 +119,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     final markerId = MarkerId(key);
     final marker = Marker(
       markerId: markerId,
-      onTap: onTap,
+      onTap: onTap != null ? () => onTap(key) : null,
       consumeTapEvents: onTap != null,
       position: position.toLatLng(),
       icon: icon == null
@@ -313,6 +313,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   void addPolygon(
     String id,
     Iterable<GeoCoord> points, {
+    ValueChanged<String> onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -344,6 +345,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       () => Polygon(
         polygonId: PolygonId(id),
         points: points.mapList((_) => _.toLatLng()),
+        consumeTapEvents: onTap != null,
+        onTap: onTap != null ? () => onTap(id) : null,
         strokeWidth: strokeWidth?.toInt() ?? 1,
         strokeColor: (strokeColor ?? const Color(0x000000))
             .withOpacity(strokeOpacity ?? 0.8),
@@ -357,6 +360,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   void editPolygon(
     String id,
     Iterable<GeoCoord> points, {
+    ValueChanged<String> onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,
@@ -367,6 +371,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     addPolygon(
       id,
       points,
+      onTap: onTap,
       strokeColor: strokeColor,
       strokeOpacity: strokeOpacity,
       strokeWidth: strokeWeight,
