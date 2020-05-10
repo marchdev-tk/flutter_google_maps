@@ -29,8 +29,9 @@ class Marker {
   /// [label] can be set only for `web`.
   final String label;
 
-  /// f [icon] is set, must be a path to an image from project root
-  /// as follows: `assets/images/image.png`.
+  /// If [icon] is set, must be a path to an image from project root
+  /// as follows: `assets/images/image.png`. Or it must be an instance
+  /// of [ByteString].
   final String icon;
 
   /// If [info] is set and click event will be fired, will be shown popup with [info] within.

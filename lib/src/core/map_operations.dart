@@ -70,7 +70,8 @@ abstract class MapMarkers {
   /// [label] can be set only for `web`.
   ///
   /// If [icon] is set, must be a path to an image from project root
-  /// as follows: `assets/images/image.png`.
+  /// as follows: `assets/images/image.png`. Or it must be an instance
+  /// of [ByteString].
   ///
   /// If [info] is set and click event will be fired, will be shown popup with [info] within.
   ///  * For `web` [info] could be a [String] or `HTML String`

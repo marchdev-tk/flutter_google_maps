@@ -11,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_directions_api/google_directions_api.dart';
 
 import 'utils.dart';
-import '../core/utils.dart' as exception;
+import '../core/utils.dart' as utils;
 import '../core/google_map.dart' as gmap;
 import '../core/map_items.dart' as items;
 
@@ -35,12 +35,16 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }
   }
 
-  Future<BitmapDescriptor> _getBmpDescFromAsset(String asset) async {
-    if (asset == null) return BitmapDescriptor.defaultMarker;
+  FutureOr<BitmapDescriptor> _getBmpDesc(String image) async {
+    if (image == null) return BitmapDescriptor.defaultMarker;
+
+    if (utils.ByteString.isByteString(image)) {
+      return BitmapDescriptor.fromBytes(utils.ByteString.fromString(image));
+    }
 
     return await BitmapDescriptor.fromAssetImage(
       createLocalImageConfiguration(context),
-      asset,
+      image,
     );
   }
 
@@ -87,7 +91,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     try {
       await _controller?.setMapStyle(mapStyle);
     } on MapStyleException catch (e) {
-      throw exception.MapStyleException(e.cause);
+      throw utils.MapStyleException(e.cause);
     }
   }
 
@@ -125,7 +129,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       position: position.toLatLng(),
       icon: icon == null
           ? BitmapDescriptor.defaultMarker
-          : await _getBmpDescFromAsset('${fixAssetPath(icon)}$icon'),
+          : await _getBmpDesc('${fixAssetPath(icon)}$icon'),
       infoWindow: info != null
           ? InfoWindow(
               title: info,

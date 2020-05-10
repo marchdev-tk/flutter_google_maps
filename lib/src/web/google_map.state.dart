@@ -17,7 +17,7 @@ import 'package:google_directions_api/google_directions_api.dart'
 
 import 'utils.dart';
 import '../core/google_map.dart';
-import '../core/utils.dart' as exception;
+import '../core/utils.dart' as utils;
 import '../core/map_items.dart' as items;
 
 class GoogleMapState extends GoogleMapStateBase {
@@ -33,6 +33,17 @@ class GoogleMapState extends GoogleMapStateBase {
 
   GMap _map;
   MapOptions _mapOptions;
+
+  String _getImage(String image) {
+    if (image == null) return null;
+
+    if (utils.ByteString.isByteString(image)) {
+      final blob = Blob([utils.ByteString.fromString(image)], 'image/png');
+      return Url.createObjectUrlFromBlob(blob);
+    }
+
+    return '${fixAssetPath(image)}assets/$image';
+  }
 
   @override
   void moveCamera(
@@ -69,7 +80,7 @@ class GoogleMapState extends GoogleMapStateBase {
       _mapOptions.styles = mapStyle?.parseMapStyle();
       _map.options = _mapOptions;
     } catch (e) {
-      throw exception.MapStyleException(e.toString());
+      throw utils.MapStyleException(e.toString());
     }
   }
 
@@ -102,7 +113,7 @@ class GoogleMapState extends GoogleMapStateBase {
     final marker = Marker()
       ..map = _map
       ..label = label
-      ..icon = icon != null ? '${fixAssetPath(icon)}assets/$icon' : null
+      ..icon = _getImage(icon)
       ..position = position.toLatLng();
 
     if (info != null || onTap != null) {

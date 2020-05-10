@@ -8,6 +8,8 @@ export 'src/core/map_items.dart';
 export 'src/core/map_operations.dart';
 export 'src/core/map_preferences.dart';
 
+export 'src/core/utils.dart';
+
 export 'src/core/google_map.dart';
 export 'src/core/google_map.state.dart'
     if (dart.library.html) 'src/web/google_map.state.dart'

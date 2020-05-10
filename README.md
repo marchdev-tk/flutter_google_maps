@@ -228,6 +228,7 @@ Here's list of interactions:
     VOidCallback onInfoWindowTap,
   });
   ```
+**Please note:** [icon] could be a *path to an image asset* or it could be an instance of *ByteString*.
 
 * Add marker to the map by given [marker] object
   ```dart
