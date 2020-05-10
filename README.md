@@ -133,6 +133,7 @@ And now you're ready to go.
 | interactive       | bool                   | Defines whether map is interactive or not                                        |
 | onTap             | ValueChanged<GeoCoord> | Called every time a GoogleMap is tapped                                          |
 | onLongPress       | ValueChanged<GeoCoord> | Called every time a GoogleMap is long pressed (for web when right mouse clicked) |
+| markers           | Set<Marker>            | Markers to be placed on the map                                                  |
 
 **`MapType` is one of following variants:**
 
@@ -218,7 +219,7 @@ Here's list of interactions:
 
 * Add marker to the map by given [position]
   ```dart
-  void addMarker(
+  void addMarkerRaw(
     GeoCoord position, {
     String label,
     String icon,
@@ -227,10 +228,17 @@ Here's list of interactions:
     VOidCallback onInfoWindowTap,
   });
   ```
+
+* Add marker to the map by given [marker] object
+  ```dart
+  void addMarkerRaw(Marker marker);
+  ```
+
 * Remove marker from the map by given [position]
   ```dart
   void removeMarker(GeoCoord position);
   ```
+
 * Remove all markers from the map
   ```dart
   void clearMarkers();
@@ -249,6 +257,7 @@ Here's list of interactions:
     String endInfo,
   });
   ```
+
 * Remove direction from the map by given [origin] and [destination] coordinates
   ```dart
   void removeDirection(dynamic origin, dynamic destination);

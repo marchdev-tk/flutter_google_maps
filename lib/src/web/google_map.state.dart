@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter/scheduler.dart' show SchedulerBinding;
 
 import 'package:uuid/uuid.dart';
 import 'package:flinq/flinq.dart';
@@ -17,6 +18,7 @@ import 'package:google_directions_api/google_directions_api.dart'
 import 'utils.dart';
 import '../core/google_map.dart';
 import '../core/utils.dart' as exception;
+import '../core/map_items.dart' as items;
 
 class GoogleMapState extends GoogleMapStateBase {
   final htmlId = Uuid().v1();
@@ -72,7 +74,7 @@ class GoogleMapState extends GoogleMapStateBase {
   }
 
   @override
-  void addMarker(
+  void addMarkerRaw(
     GeoCoord position, {
     String label,
     String icon,
@@ -150,6 +152,17 @@ class GoogleMapState extends GoogleMapStateBase {
 
     _markers[key] = marker;
   }
+
+  @override
+  void addMarker(items.Marker marker) => addMarkerRaw(
+        marker.position,
+        label: marker.label,
+        icon: marker.icon,
+        info: marker.info,
+        infoSnippet: marker.infoSnippet,
+        onTap: marker.onTap,
+        onInfoWindowTap: marker.onInfoWindowTap,
+      );
 
   @override
   void removeMarker(GeoCoord position) {
@@ -245,14 +258,14 @@ class GoogleMapState extends GoogleMapStateBase {
                 if (startIcon != null ||
                     startInfo != null ||
                     startLabel != null) {
-                  addMarker(
+                  addMarkerRaw(
                     startLatLng.toGeoCoord(),
                     icon: startIcon,
                     info: startInfo ?? leg.startAddress,
                     label: startLabel,
                   );
                 } else {
-                  addMarker(
+                  addMarkerRaw(
                     startLatLng.toGeoCoord(),
                     icon: 'assets/images/marker_a.png',
                     info: leg.startAddress,
@@ -263,14 +276,14 @@ class GoogleMapState extends GoogleMapStateBase {
               final endLatLng = leg?.endLocation;
               if (endLatLng != null) {
                 if (endIcon != null || endInfo != null || endLabel != null) {
-                  addMarker(
+                  addMarkerRaw(
                     endLatLng.toGeoCoord(),
                     icon: endIcon,
                     info: endInfo ?? leg.endAddress,
                     label: endLabel,
                   );
                 } else {
-                  addMarker(
+                  addMarkerRaw(
                     endLatLng.toGeoCoord(),
                     icon: 'assets/images/marker_b.png',
                     info: leg.endAddress,
@@ -458,6 +471,16 @@ class GoogleMapState extends GoogleMapStateBase {
       ..styles = widget.mapStyle?.parseMapStyle()
       ..mapTypeId = widget.mapType.toString().split('.')[1]
       ..gestureHandling = widget.interactive ? 'auto' : 'none';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      for (var marker in widget.markers) {
+        addMarker(marker);
+      }
+    });
   }
 
   @override

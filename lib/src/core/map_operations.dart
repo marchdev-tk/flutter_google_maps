@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart' show ValueChanged;
 import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, GeoCoordBounds;
 
+import 'map_items.dart';
+
 /// Interface of setting up map operations including:
 ///
 ///  * Markers
@@ -81,7 +83,7 @@ abstract class MapMarkers {
   /// if [onInfoWindowTap] is set, it will be called once InfoWindow will be tapped.
   ///
   /// If marker with same [position] have been already added, addition of a new marker will be ignored.
-  void addMarker(
+  void addMarkerRaw(
     GeoCoord position, {
     String label,
     String icon,
@@ -90,6 +92,11 @@ abstract class MapMarkers {
     ValueChanged<String> onTap,
     VoidCallback onInfoWindowTap,
   });
+
+  /// Adds a marker to the map by given [position].
+  ///
+  /// If marker with same [position] have been already added, addition of a new marker will be ignored.
+  void addMarker(Marker marker);
 
   /// Removes a marker from the map by given [position].
   void removeMarker(GeoCoord position);

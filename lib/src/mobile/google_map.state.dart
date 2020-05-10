@@ -13,6 +13,7 @@ import 'package:google_directions_api/google_directions_api.dart';
 import 'utils.dart';
 import '../core/utils.dart' as exception;
 import '../core/google_map.dart' as gmap;
+import '../core/map_items.dart' as items;
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
   final directionsService = DirectionsService();
@@ -91,7 +92,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   }
 
   @override
-  void addMarker(
+  void addMarkerRaw(
     GeoCoord position, {
     String label,
     String icon,
@@ -136,6 +137,17 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
     _setState(() => _markers[key] = marker);
   }
+
+  @override
+  void addMarker(items.Marker marker) => addMarkerRaw(
+        marker.position,
+        label: marker.label,
+        icon: marker.icon,
+        info: marker.info,
+        infoSnippet: marker.infoSnippet,
+        onTap: marker.onTap,
+        onInfoWindowTap: marker.onInfoWindowTap,
+      );
 
   @override
   void removeMarker(GeoCoord position) {
@@ -211,14 +223,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           if (startLatLng != null) {
             _directionMarkerCoords[startLatLng] = origin;
             if (startIcon != null || startInfo != null || startLabel != null) {
-              addMarker(
+              addMarkerRaw(
                 startLatLng,
                 icon: startIcon ?? 'assets/images/marker_a.png',
                 info: startInfo ?? leg.startAddress,
                 label: startLabel,
               );
             } else {
-              addMarker(
+              addMarkerRaw(
                 startLatLng,
                 icon: 'assets/images/marker_a.png',
                 info: leg.startAddress,
@@ -230,14 +242,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           if (endLatLng != null) {
             _directionMarkerCoords[endLatLng] = destination;
             if (endIcon != null || endInfo != null || endLabel != null) {
-              addMarker(
+              addMarkerRaw(
                 endLatLng,
                 icon: endIcon ?? 'assets/images/marker_b.png',
                 info: endInfo ?? leg.endAddress,
                 label: endLabel,
               );
             } else {
-              addMarker(
+              addMarkerRaw(
                 endLatLng,
                 icon: 'assets/images/marker_b.png',
                 info: leg.endAddress,
@@ -397,6 +409,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void clearPolygons() => _setState(() => _polygons.clear());
+
+  @override
+  void initState() {
+    super.initState();
+    for (var marker in widget.markers) {
+      addMarker(marker);
+    }
+  }
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(

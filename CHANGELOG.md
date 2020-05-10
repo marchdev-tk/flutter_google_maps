@@ -5,6 +5,10 @@
 * Changed onTap VoidCallback to onTap ValueChanged with marker ID as an argument
 * Added onTap for polygon with polygon ID as an argument
 
+### BREAKING CHANGE
+* addMarker now is addMarkerRaw
+* addMarker now accepts instance of a Marker object
+
 ## [3.6.0]
 
 * Added infoSnippet as an argument to addMarker method

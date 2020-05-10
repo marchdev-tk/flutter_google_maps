@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, DirectionsService;
 
+import 'map_items.dart';
 import 'map_operations.dart';
 import 'map_preferences.dart';
 
@@ -17,11 +18,13 @@ import 'google_map.state.dart'
 
 /// This widget will try to occupy all available space
 class GoogleMap extends StatefulWidget {
+  /// Creates an instance of [GoogleMap].
   const GoogleMap({
     Key key,
     this.minZoom,
     this.maxZoom,
     this.mapStyle,
+    this.markers,
     this.onTap,
     this.onLongPress,
     this.interactive = true,
@@ -73,6 +76,9 @@ class GoogleMap extends StatefulWidget {
 
   /// Called every time a [GoogleMap] is tapped.
   final ValueChanged<GeoCoord> onTap;
+
+  /// Markers to be placed on the map.
+  final Set<Marker> markers;
 
   /// Called every time a [GoogleMap] is long pressed.
   ///

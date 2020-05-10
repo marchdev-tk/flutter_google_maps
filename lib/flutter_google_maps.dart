@@ -4,6 +4,7 @@
 
 library flutter_google_maps;
 
+export 'src/core/map_items.dart';
 export 'src/core/map_operations.dart';
 export 'src/core/map_preferences.dart';
 

@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
         FloatingActionButton(
           child: Icon(Icons.pin_drop),
           onPressed: () {
-            GoogleMap.of(_key).addMarker(
+            GoogleMap.of(_key).addMarkerRaw(
               GeoCoord(33.875513, -117.550257),
               info: 'test info',
               onInfoWindowTap: () async {
@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             );
-            GoogleMap.of(_key).addMarker(
+            GoogleMap.of(_key).addMarkerRaw(
               GeoCoord(33.775513, -117.450257),
               icon: 'assets/images/map-marker-warehouse.png',
               info: contentString,
@@ -166,6 +166,11 @@ class _MyHomePageState extends State<MyHomePage> {
             Positioned.fill(
               child: GoogleMap(
                 key: _key,
+                markers: {
+                  Marker(
+                    GeoCoord(34.0469058, -118.3503948),
+                  ),
+                },
                 initialZoom: 12,
                 initialPosition:
                     GeoCoord(34.0469058, -118.3503948), // Los Angeles, CA
@@ -197,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     southwest: GeoCoord(33.835745, -117.712785),
                   );
                   GoogleMap.of(_key).moveCamera(bounds);
-                  GoogleMap.of(_key).addMarker(
+                  GoogleMap.of(_key).addMarkerRaw(
                     GeoCoord(
                       (bounds.northeast.latitude + bounds.southwest.latitude) /
                           2,
