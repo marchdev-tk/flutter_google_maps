@@ -4,6 +4,7 @@
 
 * Changed onTap VoidCallback to onTap ValueChanged with marker ID as an argument
 * Added onTap for polygon with polygon ID as an argument
+* Added option for marker icon to be a path to an asset as well as to be a ByteString
 
 ### BREAKING CHANGE
 * addMarker now is addMarkerRaw
