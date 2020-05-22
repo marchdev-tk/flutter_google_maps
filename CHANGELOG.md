@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.7.1]
+
+* Fixed bug when app crash, when there's no any marker on mobile map
+
 ## [3.7.0]
 
 * Changed onTap VoidCallback to onTap ValueChanged with marker ID as an argument

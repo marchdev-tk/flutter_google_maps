@@ -4,16 +4,15 @@
 
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-
 import 'package:flinq/flinq.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_directions_api/google_directions_api.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'utils.dart';
-import '../core/utils.dart' as utils;
 import '../core/google_map.dart' as gmap;
 import '../core/map_items.dart' as items;
+import '../core/utils.dart' as utils;
+import 'utils.dart';
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
   final directionsService = DirectionsService();
@@ -201,11 +200,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }());
 
     final request = DirectionsRequest(
-      origin: origin is GeoCoord
-          ? LatLng(origin.latitude, origin.longitude)
-          : origin,
-      destination:
-          destination is GeoCoord ? destination.toLatLng() : destination,
+      origin: origin is GeoCoord ? LatLng(origin.latitude, origin.longitude) : origin,
+      destination: destination is GeoCoord ? destination.toLatLng() : destination,
       travelMode: TravelMode.driving,
     );
     directionsService.route(
@@ -264,8 +260,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           final polylineId = PolylineId(key);
           final polyline = Polyline(
             polylineId: polylineId,
-            points: response?.routes?.firstOrNull?.overviewPath
-                    ?.mapList((_) => _.toLatLng()) ??
+            points: response?.routes?.firstOrNull?.overviewPath?.mapList((_) => _.toLatLng()) ??
                 [startLatLng?.toLatLng(), endLatLng?.toLatLng()],
             color: const Color(0xcc2196F3),
             startCap: Cap.roundCap,
@@ -364,10 +359,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
         consumeTapEvents: onTap != null,
         onTap: onTap != null ? () => onTap(id) : null,
         strokeWidth: strokeWidth?.toInt() ?? 1,
-        strokeColor: (strokeColor ?? const Color(0x000000))
-            .withOpacity(strokeOpacity ?? 0.8),
-        fillColor: (fillColor ?? const Color(0x000000))
-            .withOpacity(fillOpacity ?? 0.35),
+        strokeColor: (strokeColor ?? const Color(0x000000)).withOpacity(strokeOpacity ?? 0.8),
+        fillColor: (fillColor ?? const Color(0x000000)).withOpacity(fillOpacity ?? 0.35),
       ),
     );
   }
@@ -417,8 +410,10 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   @override
   void initState() {
     super.initState();
-    for (var marker in widget.markers) {
-      addMarker(marker);
+    if (widget.markers != null) {
+      for (var marker in widget.markers) {
+        addMarker(marker);
+      }
     }
   }
 
@@ -433,8 +428,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               polygons: Set<Polygon>.of(_polygons.values),
               polylines: Set<Polyline>.of(_polylines.values),
               mapType: MapType.values[widget.mapType.index],
-              minMaxZoomPreference:
-                  MinMaxZoomPreference(widget.minZoom, widget.minZoom),
+              minMaxZoomPreference: MinMaxZoomPreference(widget.minZoom, widget.minZoom),
               initialCameraPosition: CameraPosition(
                 target: widget.initialPosition.toLatLng(),
                 zoom: widget.initialZoom,
@@ -454,14 +448,11 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               indoorViewEnabled: widget.mobilePreferences.indoorViewEnabled,
               mapToolbarEnabled: widget.mobilePreferences.mapToolbarEnabled,
               myLocationEnabled: widget.mobilePreferences.myLocationEnabled,
-              myLocationButtonEnabled:
-                  widget.mobilePreferences.myLocationButtonEnabled,
+              myLocationButtonEnabled: widget.mobilePreferences.myLocationButtonEnabled,
               tiltGesturesEnabled: widget.mobilePreferences.tiltGesturesEnabled,
               zoomGesturesEnabled: widget.mobilePreferences.zoomGesturesEnabled,
-              rotateGesturesEnabled:
-                  widget.mobilePreferences.rotateGesturesEnabled,
-              scrollGesturesEnabled:
-                  widget.mobilePreferences.scrollGesturesEnabled,
+              rotateGesturesEnabled: widget.mobilePreferences.rotateGesturesEnabled,
+              scrollGesturesEnabled: widget.mobilePreferences.scrollGesturesEnabled,
             ),
           ),
         ),
