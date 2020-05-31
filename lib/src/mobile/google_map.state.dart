@@ -4,15 +4,16 @@
 
 import 'dart:async';
 
-import 'package:flinq/flinq.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_directions_api/google_directions_api.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:flinq/flinq.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_directions_api/google_directions_api.dart';
+
+import 'utils.dart';
+import '../core/utils.dart' as utils;
 import '../core/google_map.dart' as gmap;
 import '../core/map_items.dart' as items;
-import '../core/utils.dart' as utils;
-import 'utils.dart';
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
   final directionsService = DirectionsService();
