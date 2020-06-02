@@ -453,6 +453,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               tiltGesturesEnabled: widget.mobilePreferences.tiltGesturesEnabled,
               zoomGesturesEnabled: widget.mobilePreferences.zoomGesturesEnabled,
               rotateGesturesEnabled: widget.mobilePreferences.rotateGesturesEnabled,
+              zoomControlsEnabled: widget.mobilePreferences.zoomControlsEnabled,
               scrollGesturesEnabled: widget.mobilePreferences.scrollGesturesEnabled,
             ),
           ),
