@@ -34,6 +34,7 @@ class MobileMapPreferences {
     this.mapToolbarEnabled = true,
     this.myLocationEnabled = false,
     this.myLocationButtonEnabled = true,
+    this.zoomControlsEnabled = true,
     this.indoorViewEnabled = false,
     this.trafficEnabled = false,
     this.buildingsEnabled = true,
@@ -83,6 +84,10 @@ class MobileMapPreferences {
   /// See also:
   ///   * [myLocationEnabled] parameter.
   final bool myLocationButtonEnabled;
+
+  /// Enables or disables the zoom in / zoom out (+/-) buttons.
+  /// By default, they are enabled.
+  final bool zoomControlsEnabled;
 
   /// Enables or disables the indoor view from the map.
   final bool indoorViewEnabled;
