@@ -232,7 +232,7 @@ Here's list of interactions:
 
 * Add marker to the map by given [marker] object
   ```dart
-  void addMarkerRaw(Marker marker);
+  void addMarker(Marker marker);
   ```
 
 * Remove marker from the map by given [position]
