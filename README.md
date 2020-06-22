@@ -199,11 +199,36 @@ Here's list of interactions:
 
 * Move camera to the new bounds
   ```dart
-  void moveCamera(
+  void moveCameraBounds(
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
+    bool waitUntilReady = true,
   });
+  ```
+
+* Move camera to the new coordinates
+  ```dart
+  void moveCamera(
+    GeoCoord latLng, {
+    bool animated = true,
+    bool waitUntilReady = true,
+    double zoom,
+  });
+  ```
+
+* Zoom camera
+  ```dart
+  void zoomCamera(
+    double zoom, {
+    bool animated = true,
+    bool waitUntilReady = true,
+  });
+  ```
+
+* Get center coordinates of the map
+  ```dart
+  FutureOr<GeoCoord> get center;
   ```
 
 * Change Map Style.

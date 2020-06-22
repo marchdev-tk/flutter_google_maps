@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async' show FutureOr;
 import 'dart:ui' show Color, VoidCallback;
 
 import 'package:flutter/foundation.dart' show ValueChanged;
@@ -24,16 +25,49 @@ abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
   ///
   /// if `animated` not set, it defaults to `true`.
   ///
-  /// For safe execution of [moveCamera] some actions must be performed, and if
+  /// For safe execution of [moveCameraBounds] some actions must be performed, and if
   /// `waitUntilReady` is set to `true` (by default it's true), so this method
-  /// will await of completion of all actions, and executes [moveCamera] as soon
+  /// will await of completion of all actions, and executes [moveCameraBounds] as soon
   /// as it possible. This argument only affects on **mobile** devices.
-  void moveCamera(
+  void moveCameraBounds(
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
     bool waitUntilReady = true,
   });
+
+  /// Moves camera to the new coordinates.
+  ///
+  /// if `animated` not set, it defaults to `true`.
+  ///
+  /// For safe execution of [moveCamera] some actions must be performed, and if
+  /// `waitUntilReady` is set to `true` (by default it's true), so this method
+  /// will await of completion of all actions, and executes [moveCamera] as soon
+  /// as it possible. This argument only affects on **mobile** devices.
+  void moveCamera(
+    GeoCoord latLng, {
+    bool animated = true,
+    bool waitUntilReady = true,
+    double zoom,
+  });
+
+  /// Sets new camera zoom.
+  ///
+  /// if `animated` not set, it defaults to `true`.
+  /// This argument only affects on **mobile** devices.
+  ///
+  /// For safe execution of [zoomCamera] some actions must be performed, and if
+  /// `waitUntilReady` is set to `true` (by default it's true), so this method
+  /// will await of completion of all actions, and executes [zoomCamera] as soon
+  /// as it possible. This argument only affects on **mobile** devices.
+  void zoomCamera(
+    double zoom, {
+    bool animated = true,
+    bool waitUntilReady = true,
+  });
+
+  /// Gets center coordinates of the map.
+  FutureOr<GeoCoord> get center;
 
   /// Sets the styling of the base map.
   ///

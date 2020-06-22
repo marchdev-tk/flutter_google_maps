@@ -49,7 +49,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   }
 
   @override
-  void moveCamera(
+  void moveCameraBounds(
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
@@ -79,6 +79,66 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       ));
     }
   }
+
+  @override
+  void moveCamera(
+    GeoCoord latLng, {
+    bool animated = true,
+    bool waitUntilReady = true,
+    double zoom,
+  }) async {
+    assert(() {
+      if (latLng == null) {
+        throw ArgumentError.notNull('latLng');
+      }
+
+      return true;
+    }());
+
+    if (waitUntilReady == true) {
+      await _waitUntilReadyCompleter.future;
+    }
+
+    if (animated == true) {
+      await _controller?.animateCamera(CameraUpdate.newLatLngZoom(
+        latLng.toLatLng(),
+        zoom ?? await _controller?.getZoomLevel(),
+      ));
+    } else {
+      await _controller?.moveCamera(CameraUpdate.newLatLngZoom(
+        latLng.toLatLng(),
+        zoom ?? await _controller?.getZoomLevel(),
+      ));
+    }
+  }
+
+  @override
+  void zoomCamera(
+    double zoom, {
+    bool animated = true,
+    bool waitUntilReady = true,
+  }) async {
+    assert(() {
+      if (zoom == null) {
+        throw ArgumentError.notNull('zoom');
+      }
+
+      return true;
+    }());
+
+    if (waitUntilReady == true) {
+      await _waitUntilReadyCompleter.future;
+    }
+
+    if (animated == true) {
+      await _controller?.animateCamera(CameraUpdate.zoomTo(zoom));
+    } else {
+      await _controller?.moveCamera(CameraUpdate.zoomTo(zoom));
+    }
+  }
+
+  FutureOr<GeoCoord> get center async =>
+      (await _controller?.getVisibleRegion())?.toGeoCoordBounds()?.center;
 
   @override
   void changeMapStyle(
@@ -201,8 +261,11 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }());
 
     final request = DirectionsRequest(
-      origin: origin is GeoCoord ? LatLng(origin.latitude, origin.longitude) : origin,
-      destination: destination is GeoCoord ? destination.toLatLng() : destination,
+      origin: origin is GeoCoord
+          ? LatLng(origin.latitude, origin.longitude)
+          : origin,
+      destination:
+          destination is GeoCoord ? destination.toLatLng() : destination,
       travelMode: TravelMode.driving,
     );
     directionsService.route(
@@ -213,7 +276,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
           if (_polylines.containsKey(key)) return;
 
-          moveCamera(
+          moveCameraBounds(
             response?.routes?.firstOrNull?.bounds,
             padding: 80,
           );
@@ -261,7 +324,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           final polylineId = PolylineId(key);
           final polyline = Polyline(
             polylineId: polylineId,
-            points: response?.routes?.firstOrNull?.overviewPath?.mapList((_) => _.toLatLng()) ??
+            points: response?.routes?.firstOrNull?.overviewPath
+                    ?.mapList((_) => _.toLatLng()) ??
                 [startLatLng?.toLatLng(), endLatLng?.toLatLng()],
             color: const Color(0xcc2196F3),
             startCap: Cap.roundCap,
@@ -360,8 +424,10 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
         consumeTapEvents: onTap != null,
         onTap: onTap != null ? () => onTap(id) : null,
         strokeWidth: strokeWidth?.toInt() ?? 1,
-        strokeColor: (strokeColor ?? const Color(0x000000)).withOpacity(strokeOpacity ?? 0.8),
-        fillColor: (fillColor ?? const Color(0x000000)).withOpacity(fillOpacity ?? 0.35),
+        strokeColor: (strokeColor ?? const Color(0x000000))
+            .withOpacity(strokeOpacity ?? 0.8),
+        fillColor: (fillColor ?? const Color(0x000000))
+            .withOpacity(fillOpacity ?? 0.35),
       ),
     );
   }
@@ -429,13 +495,15 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               polygons: Set<Polygon>.of(_polygons.values),
               polylines: Set<Polyline>.of(_polylines.values),
               mapType: MapType.values[widget.mapType.index],
-              minMaxZoomPreference: MinMaxZoomPreference(widget.minZoom, widget.minZoom),
+              minMaxZoomPreference:
+                  MinMaxZoomPreference(widget.minZoom, widget.minZoom),
               initialCameraPosition: CameraPosition(
                 target: widget.initialPosition.toLatLng(),
                 zoom: widget.initialZoom,
               ),
-              onTap: (coords) => widget.onTap(coords?.toGeoCoord()),
-              onLongPress: (coords) => widget.onTap(coords?.toGeoCoord()),
+              onTap: (coords) => widget.onTap?.call(coords?.toGeoCoord()),
+              onLongPress: (coords) =>
+                  widget.onLongPress?.call(coords?.toGeoCoord()),
               onMapCreated: (GoogleMapController controller) {
                 _controller = controller;
                 _controller.setMapStyle(widget.mapStyle);
@@ -449,12 +517,15 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               indoorViewEnabled: widget.mobilePreferences.indoorViewEnabled,
               mapToolbarEnabled: widget.mobilePreferences.mapToolbarEnabled,
               myLocationEnabled: widget.mobilePreferences.myLocationEnabled,
-              myLocationButtonEnabled: widget.mobilePreferences.myLocationButtonEnabled,
+              myLocationButtonEnabled:
+                  widget.mobilePreferences.myLocationButtonEnabled,
               tiltGesturesEnabled: widget.mobilePreferences.tiltGesturesEnabled,
               zoomGesturesEnabled: widget.mobilePreferences.zoomGesturesEnabled,
-              rotateGesturesEnabled: widget.mobilePreferences.rotateGesturesEnabled,
+              rotateGesturesEnabled:
+                  widget.mobilePreferences.rotateGesturesEnabled,
               zoomControlsEnabled: widget.mobilePreferences.zoomControlsEnabled,
-              scrollGesturesEnabled: widget.mobilePreferences.scrollGesturesEnabled,
+              scrollGesturesEnabled:
+                  widget.mobilePreferences.scrollGesturesEnabled,
             ),
           ),
         ),

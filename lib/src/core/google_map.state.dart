@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async' show FutureOr;
+
 import 'package:flutter/widgets.dart';
 
 import 'package:google_directions_api/google_directions_api.dart'
@@ -12,13 +14,33 @@ import 'google_map.dart';
 
 class GoogleMapState extends GoogleMapStateBase {
   @override
-  void moveCamera(
+  void moveCameraBounds(
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
     bool waitUntilReady = true,
   }) =>
       throw UnimplementedError();
+
+  @override
+  void moveCamera(
+    GeoCoord latLng, {
+    bool animated = true,
+    bool waitUntilReady = true,
+    double zoom,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  void zoomCamera(
+    double zoom, {
+    bool animated = true,
+    bool waitUntilReady = true,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  FutureOr<GeoCoord> get center => throw UnimplementedError();
 
   @override
   void changeMapStyle(

@@ -19,6 +19,11 @@ extension MobileGeoCoordBoundsExtensions on GeoCoordBounds {
         northeast: this.northeast.toLatLng(),
         southwest: this.southwest.toLatLng(),
       );
+
+  GeoCoord get center => GeoCoord(
+        (this.northeast.latitude + this.southwest.latitude) / 2,
+        (this.northeast.longitude + this.southwest.longitude) / 2,
+      );
 }
 
 extension MobileLatLngBoundsExtensions on LatLngBounds {

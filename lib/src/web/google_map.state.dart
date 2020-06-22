@@ -46,7 +46,7 @@ class GoogleMapState extends GoogleMapStateBase {
   }
 
   @override
-  void moveCamera(
+  void moveCameraBounds(
     GeoCoordBounds newBounds, {
     double padding = 0,
     bool animated = true,
@@ -70,6 +70,50 @@ class GoogleMapState extends GoogleMapStateBase {
     }
     _map.zoom = zoom;
   }
+
+  @override
+  void moveCamera(
+    GeoCoord latLng, {
+    bool animated = true,
+    bool waitUntilReady = true,
+    double zoom,
+  }) {
+    assert(() {
+      if (latLng == null) {
+        throw ArgumentError.notNull('latLng');
+      }
+
+      return true;
+    }());
+
+    if (animated == true) {
+      _map.panTo(latLng.toLatLng());
+      _map.zoom = zoom ?? _map.zoom;
+    } else {
+      _map.center = latLng.toLatLng();
+      _map.zoom = zoom ?? _map.zoom;
+    }
+  }
+
+  @override
+  void zoomCamera(
+    double zoom, {
+    bool animated = true,
+    bool waitUntilReady = true,
+  }) {
+    assert(() {
+      if (zoom == null) {
+        throw ArgumentError.notNull('zoom');
+      }
+
+      return true;
+    }());
+
+    _map.zoom = zoom;
+  }
+
+  @override
+  FutureOr<GeoCoord> get center => _map.center?.toGeoCoord();
 
   @override
   void changeMapStyle(
@@ -509,10 +553,10 @@ class GoogleMapState extends GoogleMapStateBase {
 
         _map = GMap(elem, _mapOptions);
 
-        _subscriptions.add(_map.onClick
-            .listen((event) => widget.onTap(event?.latLng?.toGeoCoord())));
+        _subscriptions.add(_map.onClick.listen(
+            (event) => widget.onTap?.call(event?.latLng?.toGeoCoord())));
         _subscriptions.add(_map.onRightclick.listen(
-            (event) => widget.onLongPress(event?.latLng?.toGeoCoord())));
+            (event) => widget.onLongPress?.call(event?.latLng?.toGeoCoord())));
 
         return elem;
       });

@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.8.0]
+
+* Added moveCameraBounds (old moveCamera), moveCamera (with zooming ability) and zoomCamera
+* Added center getter for center coordinates of the map
+* Fixed issue when onTap/onLongPress was not specified
+
 ## [3.7.1]
 
 * Fixed bug when app crash, when there's no any marker on mobile map

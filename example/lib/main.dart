@@ -184,6 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )),
                 mobilePreferences: const MobileMapPreferences(
                   trafficEnabled: true,
+                  zoomControlsEnabled: false,
                 ),
                 webPreferences: WebMapPreferences(
                   fullscreenControl: true,
@@ -201,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     northeast: GeoCoord(34.021307, -117.432317),
                     southwest: GeoCoord(33.835745, -117.712785),
                   );
-                  GoogleMap.of(_key).moveCamera(bounds);
+                  GoogleMap.of(_key).moveCameraBounds(bounds);
                   GoogleMap.of(_key).addMarkerRaw(
                     GeoCoord(
                       (bounds.northeast.latitude + bounds.southwest.latitude) /
