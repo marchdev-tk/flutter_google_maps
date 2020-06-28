@@ -542,4 +542,36 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
     _controller = null;
   }
+
+  @override
+  void addCircle(String id, GeoCoord center, double radius,
+      {onTap,
+      Color strokeColor = const Color(0x000000),
+      double strokeOpacity = 0.8,
+      double strokeWidth = 1,
+      Color fillColor = const Color(0x000000),
+      double fillOpacity = 0.35}) {
+    // TODO: implement addCircle
+  }
+
+  @override
+  void clearCircles() {
+    // TODO: implement clearCircles
+  }
+
+  @override
+  void editCircle(String id, GeoCoord center, double radius,
+      {onTap,
+      Color strokeColor = const Color(0x000000),
+      double strokeOpacity = 0.8,
+      double strokeWidth = 1,
+      Color fillColor = const Color(0x000000),
+      double fillOpacity = 0.35}) {
+    // TODO: implement editCircle
+  }
+
+  @override
+  void removeCircle(String id) {
+    // TODO: implement removeCircle
+  }
 }

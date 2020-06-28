@@ -28,6 +28,7 @@ class GoogleMapState extends GoogleMapStateBase {
   final _infoState = <String, bool>{};
   final _infos = <String, InfoWindow>{};
   final _polygons = <String, Polygon>{};
+  final _circles = <String, Circle>{};
   final _subscriptions = <StreamSubscription>[];
   final _directions = <String, DirectionsRenderer>{};
 
@@ -584,11 +585,106 @@ class GoogleMapState extends GoogleMapStateBase {
     _infos.clear();
     _markers.clear();
     _polygons.clear();
+    _circles.clear();
     _infoState.clear();
     _directions.clear();
     _subscriptions.clear();
 
     _map = null;
     _mapOptions = null;
+  }
+
+  @override
+  void addCircle(String id, GeoCoord center, double radius,
+      {onTap,
+      ui.Color strokeColor = const Color(0x000000),
+      double strokeOpacity = 0.8,
+      double strokeWidth = 1,
+      ui.Color fillColor = const Color(0x000000),
+      double fillOpacity = 0.35}) {
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      if (center == null) {
+        throw ArgumentError.notNull('center');
+      }
+
+      if (radius == null) {
+        throw ArgumentError.notNull('radius');
+      }
+
+      return true;
+    }());
+
+    _circles.putIfAbsent(
+      id,
+      () {
+        final options = CircleOptions()
+          ..center = center.toLatLng()
+          ..radius = radius
+          ..clickable = onTap != null
+          ..strokeColor = strokeColor?.toHashString() ?? '#000000'
+          ..strokeOpacity = strokeOpacity ?? 0.8
+          ..strokeWeight = strokeWidth ?? 1
+          ..fillColor = strokeColor?.toHashString() ?? '#000000'
+          ..fillOpacity = fillOpacity ?? 0.35;
+
+        final circle = Circle(options)..map = _map;
+
+        if (onTap != null) {
+          _subscriptions.add(circle.onClick.listen((_) => onTap(id)));
+        }
+
+        return circle;
+      },
+    );
+  }
+
+  @override
+  void clearCircles() {
+    for (var circle in _circles.values) {
+      circle?.map = null;
+      circle = null;
+    }
+    _circles.clear();
+  }
+
+  @override
+  void editCircle(String id, GeoCoord center, double radius,
+      {onTap,
+      ui.Color strokeColor = const Color(0x000000),
+      double strokeOpacity = 0.8,
+      double strokeWidth = 1,
+      ui.Color fillColor = const Color(0x000000),
+      double fillOpacity = 0.35}) {
+    removeCircle(id);
+    addCircle(
+      id,
+      center,
+      radius,
+      onTap: onTap,
+      strokeColor: strokeColor,
+      strokeOpacity: strokeOpacity,
+      strokeWidth: strokeWidth,
+      fillColor: fillColor,
+      fillOpacity: fillOpacity,
+    );
+  }
+
+  @override
+  void removeCircle(String id) {
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      return true;
+    }());
+
+    var value = _circles.remove(id);
+    value?.map = null;
+    value = null;
   }
 }
