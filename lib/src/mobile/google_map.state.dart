@@ -20,6 +20,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   final _markers = <String, Marker>{};
   final _polygons = <String, Polygon>{};
+  final _circles = <String, Circle>{};
   final _polylines = <String, Polyline>{};
   final _directionMarkerCoords = <GeoCoord, dynamic>{};
 
@@ -494,6 +495,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               markers: Set<Marker>.of(_markers.values),
               polygons: Set<Polygon>.of(_polygons.values),
               polylines: Set<Polyline>.of(_polylines.values),
+              circles: Set<Circle>.of(_circles.values),
               mapType: MapType.values[widget.mapType.index],
               minMaxZoomPreference:
                   MinMaxZoomPreference(widget.minZoom, widget.minZoom),
@@ -551,13 +553,40 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       double strokeWidth = 1,
       Color fillColor = const Color(0x000000),
       double fillOpacity = 0.35}) {
-    // TODO: implement addCircle
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      if (center == null) {
+        throw ArgumentError.notNull('center');
+      }
+
+      if (radius == null) {
+        throw ArgumentError.notNull('radius');
+      }
+
+      return true;
+    }());
+
+    setState(() {
+      _circles.putIfAbsent(
+        id,
+        () => Circle(
+          circleId: CircleId(id),
+          center: center.toLatLng(),
+          radius: radius,
+          onTap: () => onTap(id),
+          strokeColor: strokeColor.withOpacity(strokeOpacity),
+          strokeWidth: strokeWidth.toInt(),
+          fillColor: fillColor.withOpacity(fillOpacity),
+        ),
+      );
+    });
   }
 
   @override
-  void clearCircles() {
-    // TODO: implement clearCircles
-  }
+  void clearCircles() => setState(() => _circles.clear());
 
   @override
   void editCircle(String id, GeoCoord center, double radius,
@@ -567,11 +596,32 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       double strokeWidth = 1,
       Color fillColor = const Color(0x000000),
       double fillOpacity = 0.35}) {
-    // TODO: implement editCircle
+    removeCircle(id);
+    addCircle(
+      id,
+      center,
+      radius,
+      onTap: onTap,
+      strokeColor: strokeColor,
+      strokeOpacity: strokeOpacity,
+      strokeWidth: strokeWidth,
+      fillColor: fillColor,
+      fillOpacity: fillOpacity,
+    );
   }
 
   @override
   void removeCircle(String id) {
-    // TODO: implement removeCircle
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      return true;
+    }());
+
+    if (!_circles.containsKey(id)) return;
+
+    _setState(() => _circles.remove(id));
   }
 }
