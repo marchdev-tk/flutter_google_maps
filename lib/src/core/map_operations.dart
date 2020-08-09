@@ -18,7 +18,8 @@ import 'map_items.dart';
 ///  * Polygons
 ///  * Camera position
 ///  * Map Style
-abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons {
+abstract class MapOperations
+    implements MapMarkers, MapDirections, MapPolygons, MapCircles {
   /// Moves camera to the new bounds.
   ///
   /// If `padding` not set, it defaults to `0`.
@@ -213,4 +214,47 @@ abstract class MapPolygons {
 
   /// Removes all polygones from the map.
   void clearPolygons();
+}
+
+/// Interface of setting up circles
+abstract class MapCircles {
+  /// Adds a circle to the map by given [id], [center] and [radius].
+  ///
+  /// Where [id] must be **unique**.
+  ///
+  /// If [id] have been already added, addition of a new circle will be ignored.
+  void addCircle(
+    String id,
+    GeoCoord center,
+    double radius, {
+    ValueChanged<String> onTap,
+    Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWidth = 1,
+    Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  });
+
+  /// Removes and then adds a circles to the map by given [id], [center] and [radius].
+  ///
+  /// Where [id] must be **unique**.
+  ///
+  /// If [id] have been already added, addition of a new circle will be ignored.
+  void editCircle(
+    String id,
+    GeoCoord center,
+    double radius, {
+    ValueChanged<String> onTap,
+    Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWidth = 1,
+    Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  });
+
+  /// Removes a circle from the map by given [id].
+  void removeCircle(String id);
+
+  /// Removes all circles from the map.
+  void clearCircles();
 }
