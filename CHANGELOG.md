@@ -1,14 +1,18 @@
 # Changelog
 
+## [4.0.0]
+
+* Added Circles support (thanks to [jan-pavlovsky](https://github.com/jan-pavlovsky))
+
 ## [3.8.0]
 
-* Added moveCameraBounds (old moveCamera), moveCamera (with zooming ability) and zoomCamera
+* Added moveCameraBounds (old moveCamera), moveCamera (with zooming ability) and zoomCamera (thanks to [travisjayday](https://github.com/travisjayday) for zoomControlsEnabled on mobile)
 * Added center getter for center coordinates of the map
 * Fixed issue when onTap/onLongPress was not specified
 
 ## [3.7.1]
 
-* Fixed bug when app crash, when there's no any marker on mobile map
+* Fixed bug when app crash, when there's no any marker on mobile map (thanks to [Chojecki](https://github.com/Chojecki))
 
 ## [3.7.0]
 
