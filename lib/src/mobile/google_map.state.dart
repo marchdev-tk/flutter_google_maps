@@ -476,6 +476,94 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   void clearPolygons() => _setState(() => _polygons.clear());
 
   @override
+  void addCircle(
+    String id,
+    GeoCoord center,
+    double radius, {
+    ValueChanged<String> onTap,
+    Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWidth = 1,
+    Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  }) {
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      if (center == null) {
+        throw ArgumentError.notNull('center');
+      }
+
+      if (radius == null) {
+        throw ArgumentError.notNull('radius');
+      }
+
+      return true;
+    }());
+
+    setState(() {
+      _circles.putIfAbsent(
+        id,
+        () => Circle(
+          circleId: CircleId(id),
+          center: center.toLatLng(),
+          radius: radius,
+          onTap: () => onTap(id),
+          strokeColor: strokeColor.withOpacity(strokeOpacity),
+          strokeWidth: strokeWidth.toInt(),
+          fillColor: fillColor.withOpacity(fillOpacity),
+        ),
+      );
+    });
+  }
+
+  @override
+  void clearCircles() => setState(() => _circles.clear());
+
+  @override
+  void editCircle(
+    String id,
+    GeoCoord center,
+    double radius, {
+    ValueChanged<String> onTap,
+    Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWidth = 1,
+    Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  }) {
+    removeCircle(id);
+    addCircle(
+      id,
+      center,
+      radius,
+      onTap: onTap,
+      strokeColor: strokeColor,
+      strokeOpacity: strokeOpacity,
+      strokeWidth: strokeWidth,
+      fillColor: fillColor,
+      fillOpacity: fillOpacity,
+    );
+  }
+
+  @override
+  void removeCircle(String id) {
+    assert(() {
+      if (id == null) {
+        throw ArgumentError.notNull('id');
+      }
+
+      return true;
+    }());
+
+    if (!_circles.containsKey(id)) return;
+
+    _setState(() => _circles.remove(id));
+  }
+
+  @override
   void initState() {
     super.initState();
     if (widget.markers != null) {
@@ -543,85 +631,5 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     _directionMarkerCoords.clear();
 
     _controller = null;
-  }
-
-  @override
-  void addCircle(String id, GeoCoord center, double radius,
-      {onTap,
-      Color strokeColor = const Color(0x000000),
-      double strokeOpacity = 0.8,
-      double strokeWidth = 1,
-      Color fillColor = const Color(0x000000),
-      double fillOpacity = 0.35}) {
-    assert(() {
-      if (id == null) {
-        throw ArgumentError.notNull('id');
-      }
-
-      if (center == null) {
-        throw ArgumentError.notNull('center');
-      }
-
-      if (radius == null) {
-        throw ArgumentError.notNull('radius');
-      }
-
-      return true;
-    }());
-
-    setState(() {
-      _circles.putIfAbsent(
-        id,
-        () => Circle(
-          circleId: CircleId(id),
-          center: center.toLatLng(),
-          radius: radius,
-          onTap: () => onTap(id),
-          strokeColor: strokeColor.withOpacity(strokeOpacity),
-          strokeWidth: strokeWidth.toInt(),
-          fillColor: fillColor.withOpacity(fillOpacity),
-        ),
-      );
-    });
-  }
-
-  @override
-  void clearCircles() => setState(() => _circles.clear());
-
-  @override
-  void editCircle(String id, GeoCoord center, double radius,
-      {onTap,
-      Color strokeColor = const Color(0x000000),
-      double strokeOpacity = 0.8,
-      double strokeWidth = 1,
-      Color fillColor = const Color(0x000000),
-      double fillOpacity = 0.35}) {
-    removeCircle(id);
-    addCircle(
-      id,
-      center,
-      radius,
-      onTap: onTap,
-      strokeColor: strokeColor,
-      strokeOpacity: strokeOpacity,
-      strokeWidth: strokeWidth,
-      fillColor: fillColor,
-      fillOpacity: fillOpacity,
-    );
-  }
-
-  @override
-  void removeCircle(String id) {
-    assert(() {
-      if (id == null) {
-        throw ArgumentError.notNull('id');
-      }
-
-      return true;
-    }());
-
-    if (!_circles.containsKey(id)) return;
-
-    _setState(() => _circles.remove(id));
   }
 }

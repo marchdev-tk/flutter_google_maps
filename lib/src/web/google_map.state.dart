@@ -530,78 +530,17 @@ class GoogleMapState extends GoogleMapStateBase {
   }
 
   @override
-  void initState() {
-    super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      for (var marker in widget.markers) {
-        addMarker(marker);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _createMapOptions();
-
-    if (_map == null) {
-      // ignore: undefined_prefixed_name
-      ui.platformViewRegistry.registerViewFactory(htmlId, (int viewId) {
-        final elem = DivElement()
-          ..id = htmlId
-          ..style.width = '100%'
-          ..style.height = '100%'
-          ..style.border = 'none';
-
-        _map = GMap(elem, _mapOptions);
-
-        _subscriptions.add(_map.onClick.listen(
-            (event) => widget.onTap?.call(event?.latLng?.toGeoCoord())));
-        _subscriptions.add(_map.onRightclick.listen(
-            (event) => widget.onLongPress?.call(event?.latLng?.toGeoCoord())));
-
-        return elem;
-      });
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) => GestureDetector(
-        onVerticalDragUpdate:
-            widget.webPreferences.dragGestures ? null : (_) {},
-        onHorizontalDragUpdate:
-            widget.webPreferences.dragGestures ? null : (_) {},
-        child: Container(
-          constraints: BoxConstraints(maxHeight: constraints.maxHeight),
-          child: HtmlElementView(viewType: htmlId),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _subscriptions.forEach((_) => _.cancel());
-
-    _infos.clear();
-    _markers.clear();
-    _polygons.clear();
-    _circles.clear();
-    _infoState.clear();
-    _directions.clear();
-    _subscriptions.clear();
-
-    _map = null;
-    _mapOptions = null;
-  }
-
-  @override
-  void addCircle(String id, GeoCoord center, double radius,
-      {onTap,
-      ui.Color strokeColor = const Color(0x000000),
-      double strokeOpacity = 0.8,
-      double strokeWidth = 1,
-      ui.Color fillColor = const Color(0x000000),
-      double fillOpacity = 0.35}) {
+  void addCircle(
+    String id,
+    GeoCoord center,
+    double radius, {
+    ValueChanged<String> onTap,
+    ui.Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWidth = 1,
+    ui.Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  }) {
     assert(() {
       if (id == null) {
         throw ArgumentError.notNull('id');
@@ -652,13 +591,17 @@ class GoogleMapState extends GoogleMapStateBase {
   }
 
   @override
-  void editCircle(String id, GeoCoord center, double radius,
-      {onTap,
-      ui.Color strokeColor = const Color(0x000000),
-      double strokeOpacity = 0.8,
-      double strokeWidth = 1,
-      ui.Color fillColor = const Color(0x000000),
-      double fillOpacity = 0.35}) {
+  void editCircle(
+    String id,
+    GeoCoord center,
+    double radius, {
+    ValueChanged<String> onTap,
+    ui.Color strokeColor = const Color(0x000000),
+    double strokeOpacity = 0.8,
+    double strokeWidth = 1,
+    ui.Color fillColor = const Color(0x000000),
+    double fillOpacity = 0.35,
+  }) {
     removeCircle(id);
     addCircle(
       id,
@@ -686,5 +629,69 @@ class GoogleMapState extends GoogleMapStateBase {
     var value = _circles.remove(id);
     value?.map = null;
     value = null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      for (var marker in widget.markers) {
+        addMarker(marker);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _createMapOptions();
+
+    if (_map == null) {
+      ui.platformViewRegistry.registerViewFactory(htmlId, (int viewId) {
+        final elem = DivElement()
+          ..id = htmlId
+          ..style.width = '100%'
+          ..style.height = '100%'
+          ..style.border = 'none';
+
+        _map = GMap(elem, _mapOptions);
+
+        _subscriptions.add(_map.onClick.listen(
+            (event) => widget.onTap?.call(event?.latLng?.toGeoCoord())));
+        _subscriptions.add(_map.onRightclick.listen(
+            (event) => widget.onLongPress?.call(event?.latLng?.toGeoCoord())));
+
+        return elem;
+      });
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) => GestureDetector(
+        onVerticalDragUpdate:
+            widget.webPreferences.dragGestures ? null : (_) {},
+        onHorizontalDragUpdate:
+            widget.webPreferences.dragGestures ? null : (_) {},
+        child: Container(
+          constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+          child: HtmlElementView(viewType: htmlId),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _subscriptions.forEach((_) => _.cancel());
+
+    _infos.clear();
+    _markers.clear();
+    _polygons.clear();
+    _circles.clear();
+    _infoState.clear();
+    _directions.clear();
+    _subscriptions.clear();
+
+    _map = null;
+    _mapOptions = null;
   }
 }
