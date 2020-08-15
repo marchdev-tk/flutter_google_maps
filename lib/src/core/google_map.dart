@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, DirectionsService;
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmap;
 
 import 'map_items.dart';
 import 'map_operations.dart';
@@ -27,6 +28,7 @@ class GoogleMap extends StatefulWidget {
     this.markers,
     this.onTap,
     this.onLongPress,
+    this.onMapMove,
     this.interactive = true,
     this.initialZoom = _zoom,
     this.mapType = MapType.roadmap,
@@ -84,6 +86,8 @@ class GoogleMap extends StatefulWidget {
   ///
   /// For `web` this will be called when `right mouse clicked`.
   final ValueChanged<GeoCoord> onLongPress;
+
+  final ValueChanged<gmap.CameraPosition> onMapMove;
 
   /// Set of mobile map preferences.
   final MobileMapPreferences mobilePreferences;
