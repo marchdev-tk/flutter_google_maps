@@ -63,13 +63,13 @@ class GoogleMapState extends GoogleMapStateBase {
 
     _map.center = newBounds.center.toLatLng();
 
-    final zoom = _map.zoom;
+    // final zoom = _map.zoom;
     if (animated == true) {
       _map.panToBounds(newBounds.toLatLngBounds());
     } else {
       _map.fitBounds(newBounds.toLatLngBounds());
     }
-    _map.zoom = zoom;
+    // _map.zoom = zoom;
   }
 
   @override
