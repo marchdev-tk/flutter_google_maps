@@ -14,6 +14,7 @@ import 'google_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show PatternItem;
 
 class GoogleMapState extends GoogleMapStateBase {
+
   @override
   void moveCameraBounds(
     GeoCoordBounds newBounds, {
@@ -42,6 +43,10 @@ class GoogleMapState extends GoogleMapStateBase {
 
   @override
   FutureOr<GeoCoord> get center => throw UnimplementedError();
+
+  FutureOr<double> get zoom => throw UnimplementedError();
+
+  FutureOr<GeoCoordBounds> get bounds => throw UnimplementedError();
 
   @override
   void changeMapStyle(
