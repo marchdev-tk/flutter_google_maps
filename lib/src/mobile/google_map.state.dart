@@ -14,6 +14,7 @@ import 'utils.dart';
 import '../core/utils.dart' as utils;
 import '../core/google_map.dart' as gmap;
 import '../core/map_items.dart' as items;
+import 'package:google_maps_flutter/google_maps_flutter.dart' show PatternItem;
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
   final directionsService = DirectionsService();
@@ -160,6 +161,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   void addMarkerRaw(
     GeoCoord position, {
     String label,
+    String id,
     String icon,
     String info,
     String infoSnippet,
@@ -178,9 +180,9 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       return true;
     }());
 
-    final key = position.toString();
+    final key = id ?? position.toString();
+    if (id == null && _markers.containsKey(key)) return;
 
-    if (_markers.containsKey(key)) return;
 
     final markerId = MarkerId(key);
     final marker = Marker(
@@ -248,6 +250,9 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     String endLabel,
     String endIcon,
     String endInfo,
+    List<PatternItem> patterns,
+    int width,
+    Color color = const Color(0xcc2196F3),
   }) {
     assert(() {
       if (origin == null) {
@@ -328,10 +333,11 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
             points: response?.routes?.firstOrNull?.overviewPath
                     ?.mapList((_) => _.toLatLng()) ??
                 [startLatLng?.toLatLng(), endLatLng?.toLatLng()],
-            color: const Color(0xcc2196F3),
+            color: color,
             startCap: Cap.roundCap,
             endCap: Cap.roundCap,
-            width: 8,
+            width: width,
+            patterns: patterns ?? [],
           );
 
           _setState(() => _polylines[key] = polyline);

@@ -19,6 +19,7 @@ import 'utils.dart';
 import '../core/google_map.dart';
 import '../core/utils.dart' as utils;
 import '../core/map_items.dart' as items;
+import 'package:google_maps_flutter/google_maps_flutter.dart' show PatternItem;
 
 class GoogleMapState extends GoogleMapStateBase {
   final htmlId = Uuid().v1();
@@ -133,6 +134,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void addMarkerRaw(
     GeoCoord position, {
     String label,
+    String id,
     String icon,
     String info,
     String infoSnippet,
@@ -151,9 +153,8 @@ class GoogleMapState extends GoogleMapStateBase {
       return true;
     }());
 
-    final key = position.toString();
-
-    if (_markers.containsKey(key)) return;
+    final key = id ?? position.toString();
+    if (id == null && _markers.containsKey(key)) return;
 
     final marker = Marker()
       ..map = _map
@@ -274,6 +275,9 @@ class GoogleMapState extends GoogleMapStateBase {
     String endLabel,
     String endIcon,
     String endInfo,
+    List<PatternItem> patterns,
+    int width,
+    Color color,
   }) {
     assert(() {
       if (origin == null) {
