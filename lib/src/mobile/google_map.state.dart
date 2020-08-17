@@ -142,10 +142,10 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   FutureOr<GeoCoord> get center async =>
       (await _controller?.getVisibleRegion())?.toGeoCoordBounds()?.center;
 
-  FutureOr<double> get zoom async =>
-      (await _controller?.getZoomLevel());
+  FutureOr<double> get zoom async => (await _controller?.getZoomLevel());
 
-  FutureOr<GeoCoordBounds> get bounds async => (await _controller?.getVisibleRegion()).toGeoCoordBounds();
+  FutureOr<GeoCoordBounds> get bounds async =>
+      (await _controller?.getVisibleRegion()).toGeoCoordBounds();
 
   @override
   void changeMapStyle(
@@ -187,7 +187,6 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
     final key = id ?? position.toString();
     if (id == null && _markers.containsKey(key)) return;
-
 
     final markerId = MarkerId(key);
     final marker = Marker(
@@ -605,8 +604,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               onTap: (coords) => widget.onTap?.call(coords?.toGeoCoord()),
               onLongPress: (coords) =>
                   widget.onLongPress?.call(coords?.toGeoCoord()),
-              onCameraMove: (position) => 
-                widget.onMapMove?.call(position),
+              onCameraMove: (position) => widget.onMapMove?.call(position),
+              onCameraIdle: () => widget.onMapIdle?.call(),
               onMapCreated: (GoogleMapController controller) {
                 _controller = controller;
                 _controller.setMapStyle(widget.mapStyle);

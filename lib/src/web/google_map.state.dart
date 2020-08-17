@@ -664,7 +664,9 @@ class GoogleMapState extends GoogleMapStateBase {
           ..style.border = 'none';
 
         _map = GMap(elem, _mapOptions);
-
+        _subscriptions.add(_map.onIdle.listen((event) {
+          widget.onMapIdle?.call();
+        }));
         _subscriptions.add(_map.onCenterChanged.listen(
             (event) {
               gmaps.CameraPosition pos = gmaps.CameraPosition(

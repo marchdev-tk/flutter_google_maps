@@ -28,6 +28,7 @@ class GoogleMap extends StatefulWidget {
     this.markers,
     this.onTap,
     this.onLongPress,
+    this.onMapIdle,
     this.onMapMove,
     this.interactive = true,
     this.initialZoom = _zoom,
@@ -87,6 +88,7 @@ class GoogleMap extends StatefulWidget {
   /// For `web` this will be called when `right mouse clicked`.
   final ValueChanged<GeoCoord> onLongPress;
 
+  final void Function() onMapIdle;
   final ValueChanged<gmap.CameraPosition> onMapMove;
 
   /// Set of mobile map preferences.
