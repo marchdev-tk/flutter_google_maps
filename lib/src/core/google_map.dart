@@ -24,7 +24,7 @@ class GoogleMap extends StatefulWidget {
     this.minZoom,
     this.maxZoom,
     this.mapStyle,
-    this.markers,
+    this.markers = const <Marker>{},
     this.onTap,
     this.onLongPress,
     this.interactive = true,
