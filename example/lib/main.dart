@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
         const SizedBox(width: 16),
         FloatingActionButton(
           child: Icon(Icons.pin_drop),
-          onPressed: () {
+          onPressed: () async{
             GoogleMap.of(_key).addMarkerRaw(
               GeoCoord(33.875513, -117.550257),
               info: 'test info',
@@ -132,8 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             );
+
             GoogleMap.of(_key).addMarkerRaw(
-              GeoCoord(33.775513, -117.450257),
+              await GoogleMap.of(_key).center,
               icon: 'assets/images/map-marker-warehouse.png',
               info: contentString,
             );
