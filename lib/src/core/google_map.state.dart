@@ -11,8 +11,10 @@ import 'package:google_directions_api/google_directions_api.dart'
 
 import 'map_items.dart';
 import 'google_map.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' show PatternItem;
 
 class GoogleMapState extends GoogleMapStateBase {
+
   @override
   void moveCameraBounds(
     GeoCoordBounds newBounds, {
@@ -42,6 +44,10 @@ class GoogleMapState extends GoogleMapStateBase {
   @override
   FutureOr<GeoCoord> get center => throw UnimplementedError();
 
+  FutureOr<double> get zoom => throw UnimplementedError();
+
+  FutureOr<GeoCoordBounds> get bounds => throw UnimplementedError();
+
   @override
   void changeMapStyle(
     String mapStyle, {
@@ -59,6 +65,9 @@ class GoogleMapState extends GoogleMapStateBase {
     String endLabel,
     String endIcon,
     String endInfo,
+    List<PatternItem> patterns,
+    int width,
+    Color color,
   }) =>
       throw UnimplementedError();
 
@@ -66,6 +75,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void addMarkerRaw(
     GeoCoord position, {
     String label,
+    String id,
     String icon,
     String info,
     String infoSnippet,

@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 
 import 'package:uuid/uuid.dart';
 import 'package:flinq/flinq.dart';
@@ -19,6 +20,7 @@ import 'utils.dart';
 import '../core/google_map.dart';
 import '../core/utils.dart' as utils;
 import '../core/map_items.dart' as items;
+import 'package:google_maps_flutter/google_maps_flutter.dart' show PatternItem;
 
 class GoogleMapState extends GoogleMapStateBase {
   final htmlId = Uuid().v1();
@@ -63,13 +65,13 @@ class GoogleMapState extends GoogleMapStateBase {
 
     _map.center = newBounds.center.toLatLng();
 
-    final zoom = _map.zoom;
+    // final zoom = _map.zoom;
     if (animated == true) {
       _map.panToBounds(newBounds.toLatLngBounds());
     } else {
       _map.fitBounds(newBounds.toLatLngBounds());
     }
-    _map.zoom = zoom;
+    // _map.zoom = zoom;
   }
 
   @override
@@ -116,6 +118,10 @@ class GoogleMapState extends GoogleMapStateBase {
   @override
   FutureOr<GeoCoord> get center => _map.center?.toGeoCoord();
 
+  FutureOr<double> get zoom => _map.zoom.toDouble();
+  
+  FutureOr<GeoCoordBounds> get bounds => _map.bounds.toGeoCoordBounds();
+
   @override
   void changeMapStyle(
     String mapStyle, {
@@ -133,6 +139,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void addMarkerRaw(
     GeoCoord position, {
     String label,
+    String id,
     String icon,
     String info,
     String infoSnippet,
@@ -151,9 +158,8 @@ class GoogleMapState extends GoogleMapStateBase {
       return true;
     }());
 
-    final key = position.toString();
-
-    if (_markers.containsKey(key)) return;
+    final key = id ?? position.toString();
+    if (id == null && _markers.containsKey(key)) return;
 
     final marker = Marker()
       ..map = _map
@@ -274,6 +280,9 @@ class GoogleMapState extends GoogleMapStateBase {
     String endLabel,
     String endIcon,
     String endInfo,
+    List<PatternItem> patterns,
+    int width,
+    Color color,
   }) {
     assert(() {
       if (origin == null) {
@@ -646,6 +655,7 @@ class GoogleMapState extends GoogleMapStateBase {
     _createMapOptions();
 
     if (_map == null) {
+      // ignore: undefined_prefixed_name
       ui.platformViewRegistry.registerViewFactory(htmlId, (int viewId) {
         final elem = DivElement()
           ..id = htmlId
@@ -654,7 +664,18 @@ class GoogleMapState extends GoogleMapStateBase {
           ..style.border = 'none';
 
         _map = GMap(elem, _mapOptions);
-
+        _subscriptions.add(_map.onIdle.listen((event) {
+          widget.onMapIdle?.call();
+        }));
+        _subscriptions.add(_map.onCenterChanged.listen(
+            (event) {
+              gmaps.CameraPosition pos = gmaps.CameraPosition(
+                target: gmaps.LatLng( _map.center.lat,  _map.center.lng), 
+                zoom: _map.zoom.toDouble(), 
+                tilt: _map.tilt,
+              );
+              widget.onMapMove?.call(pos);
+            }));
         _subscriptions.add(_map.onClick.listen(
             (event) => widget.onTap?.call(event?.latLng?.toGeoCoord())));
         _subscriptions.add(_map.onRightclick.listen(
@@ -686,7 +707,6 @@ class GoogleMapState extends GoogleMapStateBase {
     _infos.clear();
     _markers.clear();
     _polygons.clear();
-    _circles.clear();
     _infoState.clear();
     _directions.clear();
     _subscriptions.clear();

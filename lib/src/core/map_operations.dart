@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart' show ValueChanged;
 import 'package:google_directions_api/google_directions_api.dart'
     show GeoCoord, GeoCoordBounds;
 
+import 'package:google_maps_flutter/google_maps_flutter.dart' show PatternItem;
 import 'map_items.dart';
 
 /// Interface of setting up map operations including:
@@ -69,6 +70,12 @@ abstract class MapOperations
 
   /// Gets center coordinates of the map.
   FutureOr<GeoCoord> get center;
+  
+  /// Gets zoom coordinates of the map.
+  FutureOr<double> get zoom;
+  
+  /// Gets zoom coordinates of the map.
+  FutureOr<GeoCoordBounds> get bounds;
 
   /// Sets the styling of the base map.
   ///
@@ -121,6 +128,7 @@ abstract class MapMarkers {
   /// If marker with same [position] have been already added, addition of a new marker will be ignored.
   void addMarkerRaw(
     GeoCoord position, {
+    String id,
     String label,
     String icon,
     String info,
@@ -161,6 +169,9 @@ abstract class MapDirections {
     String endLabel,
     String endIcon,
     String endInfo,
+    List<PatternItem> patterns,
+    int width,
+    Color color,
   });
 
   /// Removes a direction from the map by given [origin] and [destination] coordinates.
