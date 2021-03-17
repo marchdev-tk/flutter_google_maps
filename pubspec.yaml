@@ -14,7 +14,7 @@ dependencies:
   google_maps_flutter: ^0.5.30
   google_directions_api: ^0.5.0
   google_maps: ^3.4.4
-  http: ^0.12.2
+  http: ^0.13.0
   flinq: ^1.1.1
   uuid: ^3.0.1
 
