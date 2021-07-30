@@ -25,6 +25,7 @@ class GoogleMap extends StatefulWidget {
     this.maxZoom,
     this.mapStyle,
     this.markers = const <Marker>{},
+    this.polygons = const<Polygon>{},
     this.onTap,
     this.onLongPress,
     this.interactive = true,
@@ -79,6 +80,9 @@ class GoogleMap extends StatefulWidget {
 
   /// Markers to be placed on the map.
   final Set<Marker> markers;
+
+  // Polygons to placed on the map.
+  final Set<Polygon> polygons;
 
   /// Called every time a [GoogleMap] is long pressed.
   ///

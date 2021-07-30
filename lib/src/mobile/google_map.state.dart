@@ -3,7 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flinq/flinq.dart';
@@ -191,13 +193,6 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       icon: icon == null
           ? BitmapDescriptor.defaultMarker
           : await _getBmpDesc('${fixAssetPath(icon)}$icon'),
-      infoWindow: info != null
-          ? InfoWindow(
-              title: info,
-              snippet: infoSnippet,
-              onTap: onInfoWindowTap,
-            )
-          : null,
     );
 
     _setState(() => _markers[key] = marker);
@@ -569,6 +564,18 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     if (widget.markers != null) {
       for (var marker in widget.markers) {
         addMarker(marker);
+      }
+    }
+
+    if (widget.polygons != null) {
+      for (var polygon in widget.polygons) {
+        addPolygon(
+          polygon.points.toString(),
+          polygon.points,
+          fillColor: polygon.fillColor,
+          strokeColor: polygon.strokeColor,
+          strokeWidth: polygon.strokeWidth,
+        );
       }
     }
   }
