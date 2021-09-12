@@ -2,8 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_google_maps/flutter_google_maps.dart';
 
 void main() {
@@ -35,37 +35,43 @@ class _MyHomePageState extends State<MyHomePage> {
   final _key = GlobalKey<GoogleMapStateBase>();
   bool _polygonAdded = false;
   bool _darkMapStyle = false;
-  String _mapStyle;
+  String? _mapStyle;
 
   List<Widget> _buildClearButtons() => [
-        RaisedButton.icon(
-          color: Colors.red,
-          textColor: Colors.white,
+        ElevatedButton.icon(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.red),
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+          ),
           icon: Icon(Icons.bubble_chart),
           label: Text('CLEAR POLYGONS'),
           onPressed: () {
-            GoogleMap.of(_key).clearPolygons();
+            GoogleMap.of(_key)!.clearPolygons();
             setState(() => _polygonAdded = false);
           },
         ),
         const SizedBox(width: 16),
-        RaisedButton.icon(
-          color: Colors.red,
-          textColor: Colors.white,
+        ElevatedButton.icon(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.red),
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+          ),
           icon: Icon(Icons.pin_drop),
           label: Text('CLEAR MARKERS'),
           onPressed: () {
-            GoogleMap.of(_key).clearMarkers();
+            GoogleMap.of(_key)!.clearMarkers();
           },
         ),
         const SizedBox(width: 16),
-        RaisedButton.icon(
-          color: Colors.red,
-          textColor: Colors.white,
+        ElevatedButton.icon(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.red),
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+          ),
           icon: Icon(Icons.directions),
           label: Text('CLEAR DIRECTIONS'),
           onPressed: () {
-            GoogleMap.of(_key).clearDirections();
+            GoogleMap.of(_key)!.clearDirections();
           },
         ),
       ];
@@ -76,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: _polygonAdded ? Colors.orange : null,
           onPressed: () {
             if (!_polygonAdded) {
-              GoogleMap.of(_key).addPolygon(
+              GoogleMap.of(_key)!.addPolygon(
                 '1',
                 polygon,
                 onTap: (polygonId) async {
@@ -88,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         'Polygon ID is $polygonId',
                       ),
                       actions: <Widget>[
-                        FlatButton(
+                        TextButton(
                           onPressed: Navigator.of(context).pop,
                           child: Text('CLOSE'),
                         ),
@@ -98,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               );
             } else {
-              GoogleMap.of(_key).editPolygon(
+              GoogleMap.of(_key)!.editPolygon(
                 '1',
                 polygon,
                 fillColor: Colors.purple,
@@ -113,17 +119,16 @@ class _MyHomePageState extends State<MyHomePage> {
         FloatingActionButton(
           child: Icon(Icons.pin_drop),
           onPressed: () {
-            GoogleMap.of(_key).addMarkerRaw(
+            GoogleMap.of(_key)!.addMarkerRaw(
               GeoCoord(33.875513, -117.550257),
               info: 'test info',
               onInfoWindowTap: () async {
                 await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    content: Text(
-                        'This dialog was opened by tapping on the InfoWindow!'),
+                    content: Text('This dialog was opened by tapping on the InfoWindow!'),
                     actions: <Widget>[
-                      FlatButton(
+                      TextButton(
                         onPressed: Navigator.of(context).pop,
                         child: Text('CLOSE'),
                       ),
@@ -132,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             );
-            GoogleMap.of(_key).addMarkerRaw(
+            GoogleMap.of(_key)!.addMarkerRaw(
               GeoCoord(33.775513, -117.450257),
               icon: 'assets/images/map-marker-warehouse.png',
               info: contentString,
@@ -143,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
         FloatingActionButton(
           child: Icon(Icons.directions),
           onPressed: () {
-            GoogleMap.of(_key).addDirection(
+            GoogleMap.of(_key)!.addDirection(
               'San Francisco, CA',
               'San Jose, CA',
               startLabel: '1',
@@ -172,16 +177,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 },
                 initialZoom: 12,
-                initialPosition:
-                    GeoCoord(34.0469058, -118.3503948), // Los Angeles, CA
+                initialPosition: GeoCoord(34.0469058, -118.3503948), // Los Angeles, CA
                 mapType: MapType.roadmap,
                 mapStyle: _mapStyle,
                 interactive: true,
-                onTap: (coord) =>
-                    _scaffoldKey.currentState.showSnackBar(SnackBar(
-                  content: Text(coord?.toString()),
-                  duration: const Duration(seconds: 2),
-                )),
+                onTap: (coord) => ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(coord.toString()),
+                    duration: const Duration(seconds: 2),
+                  ),
+                ),
                 mobilePreferences: const MobileMapPreferences(
                   trafficEnabled: true,
                   zoomControlsEnabled: false,
@@ -202,14 +207,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     northeast: GeoCoord(34.021307, -117.432317),
                     southwest: GeoCoord(33.835745, -117.712785),
                   );
-                  GoogleMap.of(_key).moveCameraBounds(bounds);
-                  GoogleMap.of(_key).addMarkerRaw(
+                  GoogleMap.of(_key)!.moveCameraBounds(bounds);
+                  GoogleMap.of(_key)!.addMarkerRaw(
                     GeoCoord(
-                      (bounds.northeast.latitude + bounds.southwest.latitude) /
-                          2,
-                      (bounds.northeast.longitude +
-                              bounds.southwest.longitude) /
-                          2,
+                      (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
+                      (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
                     ),
                     onTap: (markerId) async {
                       await showDialog(
@@ -220,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             'Marker ID is $markerId',
                           ),
                           actions: <Widget>[
-                            FlatButton(
+                            TextButton(
                               onPressed: Navigator.of(context).pop,
                               child: Text('CLOSE'),
                             ),
@@ -238,10 +240,10 @@ class _MyHomePageState extends State<MyHomePage> {
               child: FloatingActionButton(
                 onPressed: () {
                   if (_darkMapStyle) {
-                    GoogleMap.of(_key).changeMapStyle(null);
+                    GoogleMap.of(_key)!.changeMapStyle(null);
                     _mapStyle = null;
                   } else {
-                    GoogleMap.of(_key).changeMapStyle(darkMapStyle);
+                    GoogleMap.of(_key)!.changeMapStyle(darkMapStyle);
                     _mapStyle = darkMapStyle;
                   }
 
@@ -261,13 +263,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Row(
                 children: <Widget>[
                   LayoutBuilder(
-                    builder: (context, constraints) =>
-                        constraints.maxWidth < 1000
-                            ? Row(children: _buildClearButtons())
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: _buildClearButtons(),
-                              ),
+                    builder: (context, constraints) => constraints.maxWidth < 1000
+                        ? Row(children: _buildClearButtons())
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _buildClearButtons(),
+                          ),
                   ),
                   Spacer(),
                   ..._buildAddButtons(),

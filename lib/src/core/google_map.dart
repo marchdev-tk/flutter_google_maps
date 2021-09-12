@@ -20,7 +20,7 @@ import 'google_map.state.dart'
 class GoogleMap extends StatefulWidget {
   /// Creates an instance of [GoogleMap].
   const GoogleMap({
-    Key key,
+    Key? key,
     this.minZoom,
     this.maxZoom,
     this.mapStyle,
@@ -51,10 +51,10 @@ class GoogleMap extends StatefulWidget {
   final MapType mapType;
 
   /// The preferred minimum zoom level or null, if unbounded from below.
-  final double minZoom;
+  final double? minZoom;
 
   /// The preferred maximum zoom level or null, if unbounded from above.
-  final double maxZoom;
+  final double? maxZoom;
 
   /// Sets the styling of the base map.
   ///
@@ -69,13 +69,13 @@ class GoogleMap extends StatefulWidget {
   /// Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
   /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
   /// style reference for more information regarding the supported styles.
-  final String mapStyle;
+  final String? mapStyle;
 
   /// Defines whether map is interactive or not.
   final bool interactive;
 
   /// Called every time a [GoogleMap] is tapped.
-  final ValueChanged<GeoCoord> onTap;
+  final ValueChanged<GeoCoord>? onTap;
 
   /// Markers to be placed on the map.
   final Set<Marker> markers;
@@ -83,7 +83,7 @@ class GoogleMap extends StatefulWidget {
   /// Called every time a [GoogleMap] is long pressed.
   ///
   /// For `web` this will be called when `right mouse clicked`.
-  final ValueChanged<GeoCoord> onLongPress;
+  final ValueChanged<GeoCoord>? onLongPress;
 
   /// Set of mobile map preferences.
   final MobileMapPreferences mobilePreferences;
@@ -97,7 +97,7 @@ class GoogleMap extends StatefulWidget {
 
   /// Gets [MapOperations] interface via provided `key` of
   /// [GoogleMapStateBase] state.
-  static MapOperations of(GlobalKey<GoogleMapStateBase> key) =>
+  static MapOperations? of(GlobalKey<GoogleMapStateBase> key) =>
       key.currentState;
 
   /// Initializer of [GoogleMap].

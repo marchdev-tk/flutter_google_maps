@@ -4,16 +4,15 @@
 
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-
 import 'package:flinq/flinq.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_directions_api/google_directions_api.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'utils.dart';
-import '../core/utils.dart' as utils;
 import '../core/google_map.dart' as gmap;
 import '../core/map_items.dart' as items;
+import '../core/utils.dart' as utils;
+import 'utils.dart';
 
 class GoogleMapState extends gmap.GoogleMapStateBase {
   final directionsService = DirectionsService();
@@ -26,7 +25,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   final _waitUntilReadyCompleter = Completer<Null>();
 
-  GoogleMapController _controller;
+  GoogleMapController? _controller;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -37,8 +36,6 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   }
 
   FutureOr<BitmapDescriptor> _getBmpDesc(String image) async {
-    if (image == null) return BitmapDescriptor.defaultMarker;
-
     if (utils.ByteString.isByteString(image)) {
       return BitmapDescriptor.fromBytes(utils.ByteString.fromString(image));
     }
@@ -51,7 +48,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void moveCameraBounds(
-    GeoCoordBounds newBounds, {
+    GeoCoordBounds? newBounds, {
     double padding = 0,
     bool animated = true,
     bool waitUntilReady = true,
@@ -70,13 +67,13 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
     if (animated == true) {
       await _controller?.animateCamera(CameraUpdate.newLatLngBounds(
-        newBounds.toLatLngBounds(),
-        padding ?? 0,
+        newBounds!.toLatLngBounds(),
+        padding,
       ));
     } else {
       await _controller?.moveCamera(CameraUpdate.newLatLngBounds(
-        newBounds.toLatLngBounds(),
-        padding ?? 0,
+        newBounds!.toLatLngBounds(),
+        padding,
       ));
     }
   }
@@ -86,16 +83,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     GeoCoord latLng, {
     bool animated = true,
     bool waitUntilReady = true,
-    double zoom,
+    double? zoom,
   }) async {
-    assert(() {
-      if (latLng == null) {
-        throw ArgumentError.notNull('latLng');
-      }
-
-      return true;
-    }());
-
     if (waitUntilReady == true) {
       await _waitUntilReadyCompleter.future;
     }
@@ -103,12 +92,12 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     if (animated == true) {
       await _controller?.animateCamera(CameraUpdate.newLatLngZoom(
         latLng.toLatLng(),
-        zoom ?? await _controller?.getZoomLevel(),
+        zoom ?? (await _controller?.getZoomLevel())!,
       ));
     } else {
       await _controller?.moveCamera(CameraUpdate.newLatLngZoom(
         latLng.toLatLng(),
-        zoom ?? await _controller?.getZoomLevel(),
+        zoom ?? (await _controller?.getZoomLevel())!,
       ));
     }
   }
@@ -119,14 +108,6 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     bool animated = true,
     bool waitUntilReady = true,
   }) async {
-    assert(() {
-      if (zoom == null) {
-        throw ArgumentError.notNull('zoom');
-      }
-
-      return true;
-    }());
-
     if (waitUntilReady == true) {
       await _waitUntilReadyCompleter.future;
     }
@@ -138,12 +119,11 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }
   }
 
-  FutureOr<GeoCoord> get center async =>
-      (await _controller?.getVisibleRegion())?.toGeoCoordBounds()?.center;
+  FutureOr<GeoCoord?> get center async => (await _controller?.getVisibleRegion())?.toGeoCoordBounds().center;
 
   @override
   void changeMapStyle(
-    String mapStyle, {
+    String? mapStyle, {
     bool waitUntilReady = true,
   }) async {
     if (waitUntilReady == true) {
@@ -159,25 +139,13 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   @override
   void addMarkerRaw(
     GeoCoord position, {
-    String label,
-    String icon,
-    String info,
-    String infoSnippet,
-    ValueChanged<String> onTap,
-    VoidCallback onInfoWindowTap,
+    String? label,
+    String? icon,
+    String? info,
+    String? infoSnippet,
+    ValueChanged<String>? onTap,
+    VoidCallback? onInfoWindowTap,
   }) async {
-    assert(() {
-      if (position == null) {
-        throw ArgumentError.notNull('position');
-      }
-
-      if (position.latitude == null || position.longitude == null) {
-        throw ArgumentError.notNull('position.latitude && position.longitude');
-      }
-
-      return true;
-    }());
-
     final key = position.toString();
 
     if (_markers.containsKey(key)) return;
@@ -188,16 +156,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
       onTap: onTap != null ? () => onTap(key) : null,
       consumeTapEvents: onTap != null,
       position: position.toLatLng(),
-      icon: icon == null
-          ? BitmapDescriptor.defaultMarker
-          : await _getBmpDesc('${fixAssetPath(icon)}$icon'),
+      icon: icon == null ? BitmapDescriptor.defaultMarker : await _getBmpDesc('${fixAssetPath(icon)}$icon'),
       infoWindow: info != null
           ? InfoWindow(
               title: info,
               snippet: infoSnippet,
               onTap: onInfoWindowTap,
             )
-          : null,
+          : InfoWindow.noText,
     );
 
     _setState(() => _markers[key] = marker);
@@ -216,18 +182,6 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void removeMarker(GeoCoord position) {
-    assert(() {
-      if (position == null) {
-        throw ArgumentError.notNull('position');
-      }
-
-      if (position.latitude == null || position.longitude == null) {
-        throw ArgumentError.notNull('position.latitude && position.longitude');
-      }
-
-      return true;
-    }());
-
     final key = position.toString();
 
     if (!_markers.containsKey(key)) return;
@@ -242,12 +196,12 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   void addDirection(
     dynamic origin,
     dynamic destination, {
-    String startLabel,
-    String startIcon,
-    String startInfo,
-    String endLabel,
-    String endIcon,
-    String endInfo,
+    String? startLabel,
+    String? startIcon,
+    String? startInfo,
+    String? endLabel,
+    String? endIcon,
+    String? endInfo,
   }) {
     assert(() {
       if (origin == null) {
@@ -262,11 +216,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }());
 
     final request = DirectionsRequest(
-      origin: origin is GeoCoord
-          ? LatLng(origin.latitude, origin.longitude)
-          : origin,
-      destination:
-          destination is GeoCoord ? destination.toLatLng() : destination,
+      origin: origin is GeoCoord ? LatLng(origin.latitude, origin.longitude) : origin,
+      destination: destination is GeoCoord ? destination.toLatLng() : destination,
       travelMode: TravelMode.driving,
     );
     directionsService.route(
@@ -278,11 +229,11 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           if (_polylines.containsKey(key)) return;
 
           moveCameraBounds(
-            response?.routes?.firstOrNull?.bounds,
+            response.routes?.firstOrNull?.bounds,
             padding: 80,
           );
 
-          final leg = response?.routes?.firstOrNull?.legs?.firstOrNull;
+          final leg = response.routes?.firstOrNull?.legs?.firstOrNull;
 
           final startLatLng = leg?.startLocation;
           if (startLatLng != null) {
@@ -291,14 +242,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               addMarkerRaw(
                 startLatLng,
                 icon: startIcon ?? 'assets/images/marker_a.png',
-                info: startInfo ?? leg.startAddress,
+                info: startInfo ?? leg!.startAddress,
                 label: startLabel,
               );
             } else {
               addMarkerRaw(
                 startLatLng,
                 icon: 'assets/images/marker_a.png',
-                info: leg.startAddress,
+                info: leg!.startAddress,
               );
             }
           }
@@ -310,14 +261,14 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               addMarkerRaw(
                 endLatLng,
                 icon: endIcon ?? 'assets/images/marker_b.png',
-                info: endInfo ?? leg.endAddress,
+                info: endInfo ?? leg!.endAddress,
                 label: endLabel,
               );
             } else {
               addMarkerRaw(
                 endLatLng,
                 icon: 'assets/images/marker_b.png',
-                info: leg.endAddress,
+                info: leg!.endAddress,
               );
             }
           }
@@ -325,9 +276,8 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           final polylineId = PolylineId(key);
           final polyline = Polyline(
             polylineId: polylineId,
-            points: response?.routes?.firstOrNull?.overviewPath
-                    ?.mapList((_) => _.toLatLng()) ??
-                [startLatLng?.toLatLng(), endLatLng?.toLatLng()],
+            points: response.routes?.firstOrNull?.overviewPath?.mapList((_) => _.toLatLng()) ??
+                ((startLatLng != null && endLatLng != null) ? [startLatLng.toLatLng(), endLatLng.toLatLng()] : []),
             color: const Color(0xcc2196F3),
             startCap: Cap.roundCap,
             endCap: Cap.roundCap,
@@ -355,12 +305,12 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     }());
 
     var value = _polylines.remove('${origin}_$destination');
-    final start = value?.points?.firstOrNull?.toGeoCoord();
+    final start = value?.points.firstOrNull?.toGeoCoord();
     if (start != null) {
       removeMarker(start);
       _directionMarkerCoords.remove(start);
     }
-    final end = value?.points?.lastOrNull?.toGeoCoord();
+    final end = value?.points.lastOrNull?.toGeoCoord();
     if (end != null) {
       removeMarker(end);
       _directionMarkerCoords.remove(end);
@@ -370,13 +320,13 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void clearDirections() {
-    for (var polyline in _polylines.values) {
-      final start = polyline?.points?.firstOrNull?.toGeoCoord();
+    for (Polyline? polyline in _polylines.values) {
+      final start = polyline?.points.firstOrNull?.toGeoCoord();
       if (start != null) {
         removeMarker(start);
         _directionMarkerCoords.remove(start);
       }
-      final end = polyline?.points?.lastOrNull?.toGeoCoord();
+      final end = polyline?.points.lastOrNull?.toGeoCoord();
       if (end != null) {
         removeMarker(end);
         _directionMarkerCoords.remove(end);
@@ -390,7 +340,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   void addPolygon(
     String id,
     Iterable<GeoCoord> points, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -398,14 +348,6 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     double fillOpacity = 0.35,
   }) {
     assert(() {
-      if (id == null) {
-        throw ArgumentError.notNull('id');
-      }
-
-      if (points == null) {
-        throw ArgumentError.notNull('position');
-      }
-
       if (points.isEmpty) {
         throw ArgumentError.value(<GeoCoord>[], 'points');
       }
@@ -424,11 +366,9 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
         points: points.mapList((_) => _.toLatLng()),
         consumeTapEvents: onTap != null,
         onTap: onTap != null ? () => onTap(id) : null,
-        strokeWidth: strokeWidth?.toInt() ?? 1,
-        strokeColor: (strokeColor ?? const Color(0x000000))
-            .withOpacity(strokeOpacity ?? 0.8),
-        fillColor: (fillColor ?? const Color(0x000000))
-            .withOpacity(fillOpacity ?? 0.35),
+        strokeWidth: strokeWidth.toInt(),
+        strokeColor: (strokeColor).withOpacity(strokeOpacity),
+        fillColor: (fillColor).withOpacity(fillOpacity),
       ),
     );
   }
@@ -437,7 +377,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
   void editPolygon(
     String id,
     Iterable<GeoCoord> points, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,
@@ -459,14 +399,6 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void removePolygon(String id) {
-    assert(() {
-      if (id == null) {
-        throw ArgumentError.notNull('id');
-      }
-
-      return true;
-    }());
-
     if (!_polygons.containsKey(id)) return;
 
     _setState(() => _polygons.remove(id));
@@ -480,29 +412,13 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     String id,
     GeoCoord center,
     double radius, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
     Color fillColor = const Color(0x000000),
     double fillOpacity = 0.35,
   }) {
-    assert(() {
-      if (id == null) {
-        throw ArgumentError.notNull('id');
-      }
-
-      if (center == null) {
-        throw ArgumentError.notNull('center');
-      }
-
-      if (radius == null) {
-        throw ArgumentError.notNull('radius');
-      }
-
-      return true;
-    }());
-
     setState(() {
       _circles.putIfAbsent(
         id,
@@ -510,7 +426,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
           circleId: CircleId(id),
           center: center.toLatLng(),
           radius: radius,
-          onTap: () => onTap(id),
+          onTap: () => onTap!(id),
           strokeColor: strokeColor.withOpacity(strokeOpacity),
           strokeWidth: strokeWidth.toInt(),
           fillColor: fillColor.withOpacity(fillOpacity),
@@ -527,7 +443,7 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     String id,
     GeoCoord center,
     double radius, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -550,27 +466,9 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
 
   @override
   void removeCircle(String id) {
-    assert(() {
-      if (id == null) {
-        throw ArgumentError.notNull('id');
-      }
-
-      return true;
-    }());
-
     if (!_circles.containsKey(id)) return;
 
     _setState(() => _circles.remove(id));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.markers != null) {
-      for (var marker in widget.markers) {
-        addMarker(marker);
-      }
-    }
   }
 
   @override
@@ -585,18 +483,16 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               polylines: Set<Polyline>.of(_polylines.values),
               circles: Set<Circle>.of(_circles.values),
               mapType: MapType.values[widget.mapType.index],
-              minMaxZoomPreference:
-                  MinMaxZoomPreference(widget.minZoom, widget.minZoom),
+              minMaxZoomPreference: MinMaxZoomPreference(widget.minZoom, widget.minZoom),
               initialCameraPosition: CameraPosition(
                 target: widget.initialPosition.toLatLng(),
                 zoom: widget.initialZoom,
               ),
-              onTap: (coords) => widget.onTap?.call(coords?.toGeoCoord()),
-              onLongPress: (coords) =>
-                  widget.onLongPress?.call(coords?.toGeoCoord()),
+              onTap: (coords) => widget.onTap?.call(coords.toGeoCoord()),
+              onLongPress: (coords) => widget.onLongPress?.call(coords.toGeoCoord()),
               onMapCreated: (GoogleMapController controller) {
                 _controller = controller;
-                _controller.setMapStyle(widget.mapStyle);
+                _controller!.setMapStyle(widget.mapStyle);
 
                 _waitUntilReadyCompleter.complete();
               },
@@ -607,15 +503,12 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
               indoorViewEnabled: widget.mobilePreferences.indoorViewEnabled,
               mapToolbarEnabled: widget.mobilePreferences.mapToolbarEnabled,
               myLocationEnabled: widget.mobilePreferences.myLocationEnabled,
-              myLocationButtonEnabled:
-                  widget.mobilePreferences.myLocationButtonEnabled,
+              myLocationButtonEnabled: widget.mobilePreferences.myLocationButtonEnabled,
               tiltGesturesEnabled: widget.mobilePreferences.tiltGesturesEnabled,
               zoomGesturesEnabled: widget.mobilePreferences.zoomGesturesEnabled,
-              rotateGesturesEnabled:
-                  widget.mobilePreferences.rotateGesturesEnabled,
+              rotateGesturesEnabled: widget.mobilePreferences.rotateGesturesEnabled,
               zoomControlsEnabled: widget.mobilePreferences.zoomControlsEnabled,
-              scrollGesturesEnabled:
-                  widget.mobilePreferences.scrollGesturesEnabled,
+              scrollGesturesEnabled: widget.mobilePreferences.scrollGesturesEnabled,
             ),
           ),
         ),

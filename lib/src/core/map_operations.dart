@@ -6,8 +6,7 @@ import 'dart:async' show FutureOr;
 import 'dart:ui' show Color, VoidCallback;
 
 import 'package:flutter/foundation.dart' show ValueChanged;
-import 'package:google_directions_api/google_directions_api.dart'
-    show GeoCoord, GeoCoordBounds;
+import 'package:google_directions_api/google_directions_api.dart' show GeoCoord, GeoCoordBounds;
 
 import 'map_items.dart';
 
@@ -18,8 +17,7 @@ import 'map_items.dart';
 ///  * Polygons
 ///  * Camera position
 ///  * Map Style
-abstract class MapOperations
-    implements MapMarkers, MapDirections, MapPolygons, MapCircles {
+abstract class MapOperations implements MapMarkers, MapDirections, MapPolygons, MapCircles {
   /// Moves camera to the new bounds.
   ///
   /// If `padding` not set, it defaults to `0`.
@@ -49,7 +47,7 @@ abstract class MapOperations
     GeoCoord latLng, {
     bool animated = true,
     bool waitUntilReady = true,
-    double zoom,
+    double? zoom,
   });
 
   /// Sets new camera zoom.
@@ -68,7 +66,7 @@ abstract class MapOperations
   });
 
   /// Gets center coordinates of the map.
-  FutureOr<GeoCoord> get center;
+  FutureOr<GeoCoord?> get center;
 
   /// Sets the styling of the base map.
   ///
@@ -93,7 +91,7 @@ abstract class MapOperations
   /// provided from the `widget`. So, if map will be scrolled out, make sure that
   /// new map style will be set to widgets [GoogleMap.mapStyle].
   void changeMapStyle(
-    String mapStyle, {
+    String? mapStyle, {
     bool waitUntilReady = true,
   });
 }
@@ -121,12 +119,12 @@ abstract class MapMarkers {
   /// If marker with same [position] have been already added, addition of a new marker will be ignored.
   void addMarkerRaw(
     GeoCoord position, {
-    String label,
-    String icon,
-    String info,
-    String infoSnippet,
-    ValueChanged<String> onTap,
-    VoidCallback onInfoWindowTap,
+    String? label,
+    String? icon,
+    String? info,
+    String? infoSnippet,
+    ValueChanged<String>? onTap,
+    VoidCallback? onInfoWindowTap,
   });
 
   /// Adds a marker to the map by given [position].
@@ -155,12 +153,12 @@ abstract class MapDirections {
   void addDirection(
     dynamic origin,
     dynamic destination, {
-    String startLabel,
-    String startIcon,
-    String startInfo,
-    String endLabel,
-    String endIcon,
-    String endInfo,
+    String? startLabel,
+    String? startIcon,
+    String? startInfo,
+    String? endLabel,
+    String? endIcon,
+    String? endInfo,
   });
 
   /// Removes a direction from the map by given [origin] and [destination] coordinates.
@@ -185,7 +183,7 @@ abstract class MapPolygons {
   void addPolygon(
     String id,
     Iterable<GeoCoord> points, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -201,7 +199,7 @@ abstract class MapPolygons {
   void editPolygon(
     String id,
     Iterable<GeoCoord> points, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,
@@ -227,7 +225,7 @@ abstract class MapCircles {
     String id,
     GeoCoord center,
     double radius, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -244,7 +242,7 @@ abstract class MapCircles {
     String id,
     GeoCoord center,
     double radius, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
