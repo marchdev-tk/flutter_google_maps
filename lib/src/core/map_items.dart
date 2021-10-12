@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/foundation.dart' show ValueChanged, VoidCallback;
+import 'package:flutter/material.dart';
 
 import 'package:google_directions_api/google_directions_api.dart' show GeoCoord;
 
@@ -47,4 +48,18 @@ class Marker {
 
   /// if [onInfoWindowTap] is set, it will be called once InfoWindow will be tapped.
   final VoidCallback onInfoWindowTap;
+}
+
+class Polygon {
+  final List<GeoCoord> points;
+  final Color strokeColor;
+  final double strokeWidth;
+  final Color fillColor;
+
+  const Polygon({
+    this.points,
+    this.strokeColor = Colors.lightBlue,
+    this.strokeWidth = 1,
+    this.fillColor = Colors.lightBlue,
+  });
 }
