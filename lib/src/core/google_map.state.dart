@@ -27,7 +27,7 @@ class GoogleMapState extends GoogleMapStateBase {
     GeoCoord latLng, {
     bool animated = true,
     bool waitUntilReady = true,
-    double zoom,
+    double? zoom,
   }) =>
       throw UnimplementedError();
 
@@ -44,7 +44,7 @@ class GoogleMapState extends GoogleMapStateBase {
 
   @override
   void changeMapStyle(
-    String mapStyle, {
+    String? mapStyle, {
     bool waitUntilReady = true,
   }) =>
       throw UnimplementedError();
@@ -53,24 +53,24 @@ class GoogleMapState extends GoogleMapStateBase {
   void addDirection(
     origin,
     destination, {
-    String startLabel,
-    String startIcon,
-    String startInfo,
-    String endLabel,
-    String endIcon,
-    String endInfo,
+    String? startLabel,
+    String? startIcon,
+    String? startInfo,
+    String? endLabel,
+    String? endIcon,
+    String? endInfo,
   }) =>
       throw UnimplementedError();
 
   @override
   void addMarkerRaw(
     GeoCoord position, {
-    String label,
-    String icon,
-    String info,
-    String infoSnippet,
-    ValueChanged<String> onTap,
-    VoidCallback onInfoWindowTap,
+    String? label,
+    String? icon,
+    String? info,
+    String? infoSnippet,
+    ValueChanged<String>? onTap,
+    VoidCallback? onInfoWindowTap,
   }) =>
       throw UnimplementedError();
 
@@ -81,7 +81,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void addPolygon(
     String id,
     Iterable<GeoCoord> points, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -103,7 +103,7 @@ class GoogleMapState extends GoogleMapStateBase {
   void editPolygon(
     String id,
     Iterable<GeoCoord> points, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWeight = 1,
@@ -126,7 +126,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String id,
     GeoCoord center,
     double radius, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,
@@ -143,7 +143,7 @@ class GoogleMapState extends GoogleMapStateBase {
     String id,
     GeoCoord center,
     double radius, {
-    ValueChanged<String> onTap,
+    ValueChanged<String>? onTap,
     Color strokeColor = const Color(0x000000),
     double strokeOpacity = 0.8,
     double strokeWidth = 1,

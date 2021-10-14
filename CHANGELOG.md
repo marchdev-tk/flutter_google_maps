@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.0.1
+
+* Removed unnecessary null checks
+* Fixed markers not displaying on mobile
+
+## 5.0.0
+
+* Updated to null-safety
+* [BREAKING CHANGE] Removed `WebMapStyleExtension` as it is no longer supported by the underlying package [google_maps](https://pub.dev/packages/google_maps)
+
 ## 4.0.1
 
 * TypeError: this.widget.markers is not iterable (thanks to [slovnicki](https://github.com/slovnicki))
