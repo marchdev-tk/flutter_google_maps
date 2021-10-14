@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flinq/flinq.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_directions_api/google_directions_api.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -469,6 +470,16 @@ class GoogleMapState extends gmap.GoogleMapStateBase {
     if (!_circles.containsKey(id)) return;
 
     _setState(() => _circles.remove(id));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      for (var marker in widget.markers) {
+        addMarker(marker);
+      }
+    });
   }
 
   @override

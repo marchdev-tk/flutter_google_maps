@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.1
+
+* Removed unnecessary null checks
+* Fixed markers not displaying on mobile
+
 ## 5.0.0
 
 * Updated to null-safety
